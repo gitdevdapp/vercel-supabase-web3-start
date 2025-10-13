@@ -1,0 +1,81 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*.local
+.env
+.env.development.*
+.env.production.*
+.env.test.*
+*.backup
+.env.vercel.*
+
+# Security - Additional sensitive files
+.env.example.local
+.env.staging
+.env.preview
+.env.production.setup
+.env.service
+*.key
+*.pem
+*.p12
+*.pfx
+secrets.json
+config/secrets.yml
+
+# CDP Credentials - NEVER commit these
+cdp_api_key.json
+cdp_wallet_secret.txt
+cdp_wallet_data.json
+*_wallet_seed.json
+vercel-env-variables.txt
+
+# Test coverage reports
+coverage/
+.nyc_output/
+
+# IDE and OS files
+.vscode/settings.json
+.vscode/launch.json
+.idea/
+*.swp
+*.swo
+*~
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+.env.local
+scripts-credentials-audit.md

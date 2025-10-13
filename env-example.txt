@@ -1,0 +1,51 @@
+# =============================================================================
+# Supabase Configuration (REQUIRED)
+# =============================================================================
+# Get these values from: https://supabase.com/dashboard/project/YOUR-PROJECT/settings/api
+# 
+# 1. Go to your Supabase project dashboard
+# 2. Navigate to Settings → API
+# 3. Copy the values below
+
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY=your-anon-key-here
+
+# Optional: Service Role Key (for admin operations - keep this secret!)
+# Only needed for server-side admin operations
+# SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
+
+# =============================================================================
+# CDP (Coinbase Developer Platform) Configuration (OPTIONAL)
+# =============================================================================
+# Only required if you want to enable Web3 wallet features
+# Get credentials from: https://portal.cdp.coinbase.com/
+#
+# 1. Create account at Coinbase Developer Platform
+# 2. Generate API credentials
+# 3. Copy your API Key ID and Secret below
+
+CDP_API_KEY_ID=your-cdp-api-key-id
+CDP_API_KEY_SECRET=your-cdp-api-key-secret
+NEXT_PUBLIC_WALLET_NETWORK=base-sepolia
+
+# =============================================================================
+# AI Service Configuration (OPTIONAL)
+# =============================================================================
+# Only required if you want to enable AI chat features
+OPENAI_API_KEY=your-openai-key
+
+# =============================================================================
+# Feature Flags
+# =============================================================================
+# Enable/disable optional features (all disabled by default for safety)
+
+NEXT_PUBLIC_ENABLE_CDP_WALLETS=false    # Set to 'true' to enable wallet features
+NEXT_PUBLIC_ENABLE_AI_CHAT=false        # Set to 'true' to enable AI chat
+NEXT_PUBLIC_ENABLE_WEB3_AUTH=false      # Set to 'true' to enable Web3 auth
+
+# =============================================================================
+# Web3 Authentication Configuration (OPTIONAL)
+# =============================================================================
+# Only needed if NEXT_PUBLIC_ENABLE_WEB3_AUTH=true
+WEB3_AUTH_SECRET=your-signing-secret-here
+WALLET_CONNECT_PROJECT_ID=your-wallet-connect-project-id-optional
