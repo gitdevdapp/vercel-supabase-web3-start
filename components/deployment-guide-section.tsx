@@ -20,21 +20,20 @@ export function DeploymentGuideSection() {
 
         {/* What You Need */}
         <div className="mb-16 bg-card rounded-2xl p-8 border border-border shadow-lg">
-          <h3 className="text-2xl font-bold mb-6 flex items-center gap-3">
-            <span className="text-3xl">📋</span>
+          <h3 className="text-2xl font-bold mb-6">
             What You Need
           </h3>
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div className="flex items-start gap-3">
-                <span className="text-green-500 font-bold text-xl">✅</span>
+                <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
                 <div>
                   <h4 className="font-semibold mb-1">Supabase Account (Free)</h4>
                   <p className="text-sm text-muted-foreground">Database & Authentication</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <span className="text-green-500 font-bold text-xl">✅</span>
+                <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
                 <div>
                   <h4 className="font-semibold mb-1">Vercel Account (Free)</h4>
                   <p className="text-sm text-muted-foreground">Hosting Platform</p>
@@ -43,14 +42,14 @@ export function DeploymentGuideSection() {
             </div>
             <div className="space-y-4">
               <div className="flex items-start gap-3">
-                <span className="text-yellow-500 font-bold text-xl">⚠️</span>
+                <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2 flex-shrink-0"></div>
                 <div>
                   <h4 className="font-semibold mb-1">CDP Account (Optional)</h4>
                   <p className="text-sm text-muted-foreground">For Web3 Wallet Features</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
-                <span className="text-blue-500 font-bold text-xl">⏱️</span>
+                <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
                 <div>
                   <h4 className="font-semibold mb-1">60 Minutes</h4>
                   <p className="text-sm text-muted-foreground">First deployment time</p>
@@ -120,13 +119,12 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY=eyJhbGciOiJIUzI1NiIs...`}
                 title="Copy these 2 values"
               />
               <p className="text-sm text-green-600 dark:text-green-400 mt-3 font-medium">
-                ✅ That&apos;s it! These are the ONLY credentials you need.
+                These are the only credentials you need to get started.
               </p>
             </div>
 
             <div>
               <h4 className="font-semibold mb-3 flex items-center gap-2">
-                <span className="text-2xl">🗄️</span>
                 <span>2.3 Run Database Setup Script</span>
               </h4>
               <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
@@ -147,11 +145,11 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY=eyJhbGciOiJIUzI1NiIs...`}
                   Expected Output:
                 </p>
                 <code className="text-xs block text-green-800 dark:text-green-200">
-                  🚀 DATABASE SETUP COMPLETED SUCCESSFULLY!
+                  DATABASE SETUP COMPLETED SUCCESSFULLY
                 </code>
               </div>
               <div className="mt-4 space-y-2">
-                <p className="text-sm font-medium">✅ This creates:</p>
+                <p className="text-sm font-medium">This creates:</p>
                 <ul className="text-sm text-muted-foreground space-y-1 ml-6 list-disc">
                   <li>User profiles table with automatic creation</li>
                   <li>Row Level Security (RLS) policies</li>
@@ -194,10 +192,10 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY=eyJhbGciOiJIUzI1NiIs...`}
               </h4>
               <div className="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg p-4">
                 <p className="text-sm font-medium text-green-900 dark:text-green-100">
-                  ✅ Framework Preset: <strong>Next.js</strong> (auto-detected)
+                  Framework Preset: <strong>Next.js</strong> (auto-detected)
                 </p>
                 <p className="text-xs text-green-700 dark:text-green-300 mt-1">
-                  This is the correct framework - Vercel will automatically detect it.
+                  Vercel will automatically detect Next.js as the framework.
                 </p>
               </div>
             </div>
@@ -209,10 +207,10 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY=eyJhbGciOiJIUzI1NiIs...`}
               </h4>
               <div className="bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-3">
                 <p className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">
-                  💡 Pro Tip: Paste your entire .env file
+                  Tip: Paste your entire .env file
                 </p>
                 <p className="text-xs text-blue-700 dark:text-blue-300">
-                  See the &quot;Tip&quot; at the bottom of the Vercel screenshot? You can paste your entire <code className="bg-blue-200 dark:bg-blue-900 px-1 rounded">.env.local</code> file to populate all fields at once!
+                  Vercel allows you to paste your entire <code className="bg-blue-200 dark:bg-blue-900 px-1 rounded">.env.local</code> file to populate all fields at once.
                 </p>
               </div>
               <CodeBlock
@@ -227,7 +225,7 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY=eyJhbGciOiJIUzI1NiIs...
                 title="Environment Variables"
               />
               <p className="text-sm text-muted-foreground">
-                ⚠️ Add for <strong>Production</strong>, <strong>Preview</strong>, and <strong>Development</strong> environments
+                Add these variables for <strong>Production</strong>, <strong>Preview</strong>, and <strong>Development</strong> environments.
               </p>
             </div>
 
@@ -241,10 +239,7 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY=eyJhbGciOiJIUzI1NiIs...
               </p>
               <div className="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg p-4">
                 <p className="text-sm font-medium text-green-900 dark:text-green-100">
-                  ✓ Build Completed in ~8 seconds
-                </p>
-                <p className="text-xs text-green-700 dark:text-green-300 mt-1">
-                  Your site is live! 🚀
+                  Build completed. Your site is now live.
                 </p>
               </div>
             </div>
@@ -289,24 +284,22 @@ https://your-app.vercel.app/`}
 
         {/* Success Indicator */}
         <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl p-8 text-white text-center">
-          <div className="text-6xl mb-4">🎉</div>
-          <h3 className="text-3xl font-bold mb-4">You&apos;re Done!</h3>
+          <h3 className="text-3xl font-bold mb-4">Deployment Complete</h3>
           <p className="text-lg mb-6 opacity-90">
-            Your production-ready Web3 dApp is now live with enterprise authentication,
-            automatic user profiles, and multi-chain support.
+            Your Web3 template is live with authentication, user profiles, and multi-chain pages ready to customize.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
               href="/docs/DEPLOYMENT.md"
               className="inline-flex items-center gap-2 bg-white text-green-600 px-6 py-3 rounded-lg font-semibold hover:bg-green-50 transition-colors"
             >
-              📚 Full Deployment Guide
+              Full Deployment Guide
             </Link>
             <Link
               href="/guide"
               className="inline-flex items-center gap-2 bg-white/10 backdrop-blur text-white border-2 border-white px-6 py-3 rounded-lg font-semibold hover:bg-white/20 transition-colors"
             >
-              🚀 Get Started
+              Get Started
             </Link>
           </div>
         </div>
@@ -314,24 +307,21 @@ https://your-app.vercel.app/`}
         {/* Key Features */}
         <div className="mt-16 grid md:grid-cols-3 gap-6">
           <div className="bg-card rounded-xl p-6 border border-border">
-            <div className="text-3xl mb-3">⚡</div>
             <h4 className="font-semibold mb-2">60 Minute Setup</h4>
             <p className="text-sm text-muted-foreground">
-              From zero to production in under an hour. No complex configuration needed.
+              From clone to production in under an hour. No complex configuration needed.
             </p>
           </div>
           <div className="bg-card rounded-xl p-6 border border-border">
-            <div className="text-3xl mb-3">🔒</div>
-            <h4 className="font-semibold mb-2">Enterprise Auth</h4>
+            <h4 className="font-semibold mb-2">Secure Authentication</h4>
             <p className="text-sm text-muted-foreground">
-              Email verification, automatic profiles, and Row Level Security out of the box.
+              Email verification, automatic profiles, and Row Level Security included.
             </p>
           </div>
           <div className="bg-card rounded-xl p-6 border border-border">
-            <div className="text-3xl mb-3">⛓️</div>
-            <h4 className="font-semibold mb-2">Multi-Chain Ready</h4>
+            <h4 className="font-semibold mb-2">Multi-Chain Pages</h4>
             <p className="text-sm text-muted-foreground">
-              Support for 6+ blockchains with optional Web3 wallet integration.
+              Pre-built pages for 6+ blockchains. Optional Web3 wallet integration.
             </p>
           </div>
         </div>

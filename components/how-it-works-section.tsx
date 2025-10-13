@@ -207,10 +207,10 @@ export function HowItWorksSection() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold mb-6">
-              Build Dapps in 3 Simple Steps
+              How This Template Works
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Our AI-powered template eliminates complexity. Focus on your vision, not infrastructure.
+              Clone the repository, configure your database, and customize for your needs. Production-ready from day one.
             </p>
           </div>
 
@@ -225,17 +225,17 @@ export function HowItWorksSection() {
               {
                 number: 1,
                 title: "Clone",
-                description: "Start with our production-ready Web3 template. One-click clone from GitHub gets you up and running instantly."
+                description: "Clone the repository from GitHub. Install dependencies with npm. All code is yours to modify."
               },
               {
                 number: 2,
                 title: "Configure", 
-                description: "Set up Supabase database and configure Web3 credentials. Our AI handles complex integrations automatically."
+                description: "Run one SQL script in Supabase to set up your database. Add environment variables to Vercel. Deploy."
               },
               {
                 number: 3,
                 title: "Customize",
-                description: "Use AI-powered Rules and Prompt enhancement to transform your Dapp into a production-grade custom application."
+                description: "Replace placeholder content with your branding. Add your features. Built with Next.js, TypeScript, and Tailwind."
               }
             ].map((step) => (
               <div 

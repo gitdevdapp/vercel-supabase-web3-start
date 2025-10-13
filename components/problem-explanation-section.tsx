@@ -38,8 +38,8 @@ export function ProblemExplanationSection() {
         {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-center mb-8 leading-tight">
-            Vibe coding <span className="bg-gradient-to-r from-green-500 to-emerald-500 bg-clip-text text-transparent font-bold">apps</span> is <span className="bg-gradient-to-r from-green-500 to-emerald-500 bg-clip-text text-transparent font-bold">easy</span>.<br />
-            <span className="text-muted-foreground">Vibe coding <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent font-bold text-foreground">dApps</span> is <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent font-bold text-foreground">hard</span>.</span>
+            Building <span className="bg-gradient-to-r from-green-500 to-emerald-500 bg-clip-text text-transparent font-bold">Web Apps</span>: Fast & Simple<br />
+            <span className="text-muted-foreground">Building <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent font-bold text-foreground">Web3 Apps</span>: Slow & Complex</span>
           </h2>
           <div className="w-32 h-1.5 bg-gradient-to-r from-green-500 to-amber-500 mx-auto rounded-full"></div>
         </div>
@@ -57,7 +57,7 @@ export function ProblemExplanationSection() {
                   <CheckCircle className="w-6 h-6 text-green-500 dark:text-green-400" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold">Web2 Development</h3>
+                  <h3 className="text-xl font-semibold">Traditional Web Apps</h3>
                   <p className="text-sm text-green-600 dark:text-green-400 font-medium">Simple & Fast</p>
                 </div>
               </div>
@@ -69,11 +69,11 @@ export function ProblemExplanationSection() {
                 </div>
                 <div className="flex items-center gap-3">
                   <Users className="w-5 h-5 text-green-500 dark:text-green-400 flex-shrink-0" />
-                  <span className="text-foreground">Single &quot;Developer&quot; can make a complete SaaS application</span>
+                  <span className="text-foreground">One developer builds complete SaaS apps</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <DollarSign className="w-5 h-5 text-green-500 dark:text-green-400 flex-shrink-0" />
-                  <span className="text-foreground">$0 to test idea on production grade infra</span>
+                  <span className="text-foreground">Free production infrastructure to test ideas</span>
                 </div>
               </div>
               
@@ -91,23 +91,23 @@ export function ProblemExplanationSection() {
                   <AlertTriangle className="w-6 h-6 text-amber-500 dark:text-amber-400" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold">Web3 Development</h3>
-                  <p className="text-sm text-amber-600 dark:text-amber-400 font-medium">Complex & Costly</p>
+                  <h3 className="text-xl font-semibold">Web3 Apps Without Template</h3>
+                  <p className="text-sm text-amber-600 dark:text-amber-400 font-medium">Complex & Slow</p>
                 </div>
               </div>
               
               <div className="space-y-4">
                 <div className="flex items-center gap-3">
                   <Clock className="w-5 h-5 text-amber-500 dark:text-amber-400 flex-shrink-0" />
-                  <span className="text-foreground font-medium">Weeks of Frustration</span>
+                  <span className="text-foreground font-medium">Weeks of configuration and debugging</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Users className="w-5 h-5 text-amber-500 dark:text-amber-400 flex-shrink-0" />
-                  <span className="text-foreground">Web3 &quot;Experts&quot; Only</span>
+                  <span className="text-foreground">Requires blockchain expertise</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <HelpCircle className="w-5 h-5 text-amber-500 dark:text-amber-400 flex-shrink-0" />
-                  <span className="text-foreground">$$? How do I &quot;get gas&quot;</span>
+                  <span className="text-foreground">Complex wallet setup and gas management</span>
                 </div>
               </div>
               
@@ -125,7 +125,7 @@ export function ProblemExplanationSection() {
             <span className={`text-xl lg:text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent transition-all duration-700 ${
               isVisible ? 'animate-pulse' : ''
             }`}>
-              This Starter Kit Makes Web3 Development as Easy as Web2
+              This Template Makes Web3 Development Fast Like Web2
             </span>
           </div>
         </div>

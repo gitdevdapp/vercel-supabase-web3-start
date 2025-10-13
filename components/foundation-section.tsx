@@ -6,11 +6,10 @@ export function FoundationSection() {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl lg:text-4xl font-bold mb-6">
-            Are You a Foundation?
+            For Blockchain Foundations
           </h2>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-            With our 0 cost AI starter framework, new users can scale to million+ user production dApps for free, growing the utilization of underlying Web3 infrastructure.
-            This is the no. 1 metric to grow your chain and increase your Electric Capital report ranking.
+            This template helps developers build production apps on your chain at zero cost. More deployed apps increases developer activity and improves ecosystem metrics.
           </p>
         </div>
 
@@ -19,9 +18,9 @@ export function FoundationSection() {
             <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
               <Zap className="w-6 h-6 text-primary" />
             </div>
-            <h3 className="text-xl font-semibold mb-3">Zero Cost Infrastructure</h3>
+            <h3 className="text-xl font-semibold mb-3">Free Infrastructure</h3>
             <p className="text-muted-foreground">
-              Deploy production-ready Dapps with Vercel&apos;s global CDN and Supabase&apos;s robust database - completely free for foundation testing.
+              Developers can deploy production apps using Vercel and Supabase free tiers. No infrastructure costs to start building.
             </p>
           </div>
 
@@ -29,9 +28,9 @@ export function FoundationSection() {
             <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
               <TrendingUp className="w-6 h-6 text-primary" />
             </div>
-            <h3 className="text-xl font-semibold mb-3">Boost Your Chain Ranking</h3>
+            <h3 className="text-xl font-semibold mb-3">Increase Developer Activity</h3>
             <p className="text-muted-foreground">
-              Active dApp deployments are the #1 metric for Electric Capital reports. Help developers = grow your ecosystem ranking.
+              More deployed applications increase active developer counts. Easier development tools lead to more ecosystem growth.
             </p>
           </div>
 
@@ -39,9 +38,9 @@ export function FoundationSection() {
             <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
               <Heart className="w-6 h-6 text-primary" />
             </div>
-            <h3 className="text-xl font-semibold mb-3">100% Open Source</h3>
+            <h3 className="text-xl font-semibold mb-3">Open Source Template</h3>
             <p className="text-muted-foreground">
-              Our commitment to open source means your foundation&apos;s investment grows the entire Web3 ecosystem sustainably.
+              Free to use and modify. Support for your blockchain can be added or customized as needed.
             </p>
           </div>
         </div>

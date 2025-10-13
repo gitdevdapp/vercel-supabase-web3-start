@@ -41,12 +41,12 @@ export function Hero() {
         {/* Clarity Badge */}
         <div className="inline-block px-4 py-2 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-full mb-6">
           <span className="text-sm font-semibold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
-            🎯 Open-Source Starter Template • Free to Use & Customize
+            Open-Source Starter Template - Free to Clone and Customize
           </span>
         </div>
         
         <h1 className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-3xl text-center font-bold mb-4">
-          Build Production-Ready dApps on{" "}
+          Production Web3 Template for{" "}
           <span className="inline-block min-w-[120px]">
             <span 
               className={`font-semibold transition-all duration-500 ease-in-out ${incentives[currentIndex].color}`}
@@ -55,10 +55,9 @@ export function Hero() {
               {incentives[currentIndex].name}
             </span>
           </span>
-          {" "}in Minutes with This Starter Kit
         </h1>
         <p className="text-lg lg:text-xl mx-auto max-w-xl text-center text-muted-foreground mb-8 font-medium">
-          vercel + supabase + web3
+          Clone this Next.js starter with Supabase auth and multi-chain support. Deploy in 60 minutes.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">

@@ -6,11 +6,10 @@ export function FinalCtaSection() {
     <section className="py-20 bg-primary text-primary-foreground">
       <div className="container mx-auto px-4 text-center">
         <h2 className="text-3xl lg:text-4xl font-bold mb-6">
-          Ready to Build Your Next Web3 Application?
+          Start Building Your Web3 Application
         </h2>
         <p className="text-lg opacity-90 max-w-2xl mx-auto mb-8">
-          Get started with this production-ready starter template.
-          Deploy your multi-chain dApp in minutes, not weeks.
+          Clone this production-ready template and deploy your multi-chain app in under an hour.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
@@ -33,7 +32,7 @@ export function FinalCtaSection() {
           </div>
           <div className="flex items-center justify-center gap-2">
             <Check className="w-4 h-4" />
-            <span>30-minute setup</span>
+            <span>60-minute setup</span>
           </div>
           <div className="flex items-center justify-center gap-2">
             <Check className="w-4 h-4" />
