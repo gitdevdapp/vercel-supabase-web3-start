@@ -15,13 +15,13 @@ export function FinalCtaSection() {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
           <Button size="lg" variant="secondary" className="px-8 py-3" asChild>
-            <a href="https://github.com/yourusername/vercel-supabase-web3-start" target="_blank" rel="noreferrer">
-              Get Started Now
+            <a href="https://github.com/gitdevdapp/vercel-supabase-web3-start" target="_blank" rel="noreferrer">
+              Clone on GitHub
             </a>
           </Button>
           <Button size="lg" variant="secondary" className="px-8 py-3" asChild>
             <a href="/guide">
-              View Documentation
+              Quick Start Guide
             </a>
           </Button>
         </div>

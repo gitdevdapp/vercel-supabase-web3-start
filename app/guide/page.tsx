@@ -9,7 +9,7 @@ import { EnvVarWarning } from '@/components/env-var-warning'
 import { hasEnvVars } from '@/lib/utils'
 
 export const metadata = {
-  title: 'Complete Setup Guide | DevDapp Web3 Starter',
+  title: 'Complete Setup Guide | Web3 Starter Template',
   description: 'Deploy a complete multi-chain Web3 dApp in under 60 minutes using Cursor AI. Copy-paste prompts, no coding required.',
 }
 

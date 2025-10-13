@@ -20,8 +20,8 @@ import { Suspense } from "react";
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  "name": "Web3 Starter Kit",
-  "description": "Production-ready Web3 dApp framework supporting multiple blockchains with enterprise authentication",
+  "name": "Web3 Starter Template",
+  "description": "Open-source starter template for building production-ready multi-chain dApps. Deploy in 60 minutes with Vercel and Supabase.",
   "applicationCategory": "DeveloperApplication",
   "operatingSystem": "Web",
   "offers": {
@@ -31,8 +31,9 @@ const jsonLd = {
   },
   "publisher": {
     "@type": "Organization",
-    "name": "Web3 Starter Kit"
-  }
+    "name": "Open Source Community"
+  },
+  "codeRepository": "https://github.com/gitdevdapp/vercel-supabase-web3-start"
 };
 
 export default async function Home() {
