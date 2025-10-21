@@ -6,6 +6,7 @@ import { isCDPConfigured, FEATURE_ERRORS } from "@/lib/features";
 import { createClient } from "@/lib/supabase/server";
 import { env } from "@/lib/env";
 
+
 function getCdpClient(): CdpClient {
   if (!isCDPConfigured()) {
     throw new Error(FEATURE_ERRORS.CDP_NOT_CONFIGURED);
@@ -27,10 +28,10 @@ const createWalletSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    // 🔒 AUTHENTICATION CHECK
+    // 🔒 AUTHENTICATION CHECK - RESTORED
     const supabase = await createClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+
     if (authError || !user) {
       return NextResponse.json(
         { error: 'Unauthorized - Please sign in' },
@@ -81,16 +82,30 @@ export async function POST(request: NextRequest) {
 
     // 💾 NEW: Store wallet in database
     const walletName = type === "custom" ? name : type.charAt(0).toUpperCase() + type.slice(1);
+
+    console.log('Wallet creation debug:', {
+      userId: user.id,
+      userIdType: typeof user.id,
+      accountAddress: account.address,
+      walletName: walletName,
+      userIdString: String(user.id)
+    });
+
+    // Ensure user_id is properly formatted as string
+    const userIdString = String(user.id);
+
     const { data: wallet, error: dbError } = await supabase
       .from('user_wallets')
       .insert({
-        user_id: user.id,
+        user_id: userIdString,
         wallet_address: account.address,
         wallet_name: walletName,
         network: 'base-sepolia'
       })
       .select()
       .single();
+
+    console.log('Database insert result:', { wallet, dbError });
 
     if (dbError) {
       console.error('Database error:', dbError);
@@ -100,14 +115,20 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 📝 Log wallet creation
-    await supabase.rpc('log_wallet_operation', {
-      p_user_id: user.id,
-      p_wallet_id: wallet.id,
-      p_operation_type: 'create',
-      p_token_type: 'eth',
-      p_status: 'success'
-    });
+    // 📝 Log wallet creation (temporarily disabled for debugging)
+    try {
+      await supabase.rpc('log_wallet_operation', {
+        p_user_id: userIdString,
+        p_wallet_id: wallet.id,
+        p_operation_type: 'create',
+        p_token_type: 'eth',
+        p_status: 'success'
+      });
+      console.log('RPC logging successful');
+    } catch (rpcError) {
+      console.error('RPC logging failed:', rpcError);
+      // Don't fail the entire operation if RPC logging fails
+    }
 
     return NextResponse.json({
       address: wallet.wallet_address,

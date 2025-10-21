@@ -19,6 +19,6 @@ export const config = {
      * - protected (handles its own auth check to avoid mobile cookie timing issues)
      * Feel free to modify this pattern to include more paths.
      */
-    "/((?!_next/static|_next/image|favicon.ico|api/|auth/confirm|auth/callback|auth/error|wallet|root|tezos|apechain|avalanche|stacks|flow|guide|protected|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"
+    "/((?!_next/static|_next/image|favicon.ico|api/|auth/confirm|auth/callback|auth/error|wallet|root|tezos|apechain|avalanche|stacks|flow|guide|protected|superguide|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)"
   ],
 };

@@ -50,7 +50,7 @@ export function RootHero() {
             className="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white border-0 px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
             asChild
           >
-            <a href="https://github.com/devdapp/vercel-supabase-web3" target="_blank" rel="noreferrer" className="flex items-center gap-2">
+            <a href="https://github.com/gitdevdapp/vercel-supabase-web3-start" target="_blank" rel="noreferrer" className="flex items-center gap-2">
               <Github className="h-5 w-5" />
               Get ROOT Starter Kit
               <ExternalLink className="h-4 w-4" />

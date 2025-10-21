@@ -1,25 +1,4 @@
 {
-  "name": "vercel-supabase-web3-start",
-  "version": "1.0.0",
-  "description": "Production-ready Web3 dApp starter template - Multi-chain support with enterprise authentication",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/yourusername/vercel-supabase-web3-start.git"
-  },
-  "keywords": [
-    "web3",
-    "starter-template",
-    "nextjs",
-    "supabase",
-    "vercel",
-    "multi-chain",
-    "ethereum",
-    "typescript",
-    "react",
-    "dapp"
-  ],
-  "author": "Your Name",
-  "license": "Apache-2.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
@@ -54,7 +33,10 @@
     "setup:production-direct": "node scripts/production/setup-production-direct.js",
     "verify:production": "node scripts/production/verify-production-setup.js",
     "test:auth-flow": "node scripts/testing/test-production-auth-flow.js",
-    "test:auth-flow:quick": "QUICK_MODE=true node scripts/testing/test-production-auth-flow.js"
+    "test:auth-flow:quick": "QUICK_MODE=true node scripts/testing/test-production-auth-flow.js",
+    "test:github-oauth": "node scripts/testing/test-github-oauth-simple.js",
+    "test:github-oauth-icloud": "node scripts/testing/test-github-oauth-icloud.js",
+    "verify-oauth-fix": "node scripts/testing/verify-oauth-fix.js"
   },
   "dependencies": {
     "@coinbase/cdp-sdk": "^1.38.0",
@@ -93,6 +75,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.56.0",
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
     "@types/jest": "^30.0.0",
@@ -106,6 +89,7 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "pg": "^8.16.3",
+    "playwright": "^1.56.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
     "tailwindcss-animate": "^1.0.7",

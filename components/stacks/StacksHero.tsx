@@ -50,7 +50,7 @@ export function StacksHero() {
             className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white border-0 px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
             asChild
           >
-            <a href="https://github.com/vercel/next.js" target="_blank" rel="noopener noreferrer">
+            <a href="https://github.com/gitdevdapp/vercel-supabase-web3-start" target="_blank" rel="noopener noreferrer">
               <Github className="mr-2 h-5 w-5" />
               Get Started
               <ExternalLink className="ml-2 h-4 w-4" />

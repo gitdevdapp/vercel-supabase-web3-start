@@ -117,7 +117,7 @@ export function AvalancheTechStackSection() {
                 className="bg-slate-700 hover:bg-slate-800 text-white px-6 py-3 font-medium"
                 asChild
               >
-                <a href="https://github.com/devdapp/vercel-supabase-web3" target="_blank" rel="noreferrer" className="flex items-center gap-2">
+                <a href="https://github.com/gitdevdapp/vercel-supabase-web3-start" target="_blank" rel="noreferrer" className="flex items-center gap-2">
                   View on GitHub
                   <ExternalLink className="h-4 w-4" />
                 </a>

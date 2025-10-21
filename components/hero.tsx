@@ -38,15 +38,8 @@ export function Hero() {
       <h2 className="sr-only">Vercel + Supabase + Web3 Stack</h2>
 
       <div className="text-center max-w-4xl">
-        {/* Clarity Badge */}
-        <div className="inline-block px-4 py-2 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-full mb-6">
-          <span className="text-sm font-semibold bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
-            Open-Source Starter Template - Free to Clone and Customize
-          </span>
-        </div>
-        
         <h1 className="text-3xl lg:text-4xl !leading-tight mx-auto max-w-3xl text-center font-bold mb-4">
-          Production Web3 Template for{" "}
+          An AI Framework for{" "}
           <span className="inline-block min-w-[120px]">
             <span 
               className={`font-semibold transition-all duration-500 ease-in-out ${incentives[currentIndex].color}`}
@@ -55,20 +48,21 @@ export function Hero() {
               {incentives[currentIndex].name}
             </span>
           </span>
+          {" "}that makes building Dapps with Vibe Coding as easy as Apps
         </h1>
         <p className="text-lg lg:text-xl mx-auto max-w-xl text-center text-muted-foreground mb-8 font-medium">
-          Clone this Next.js starter with Supabase auth and multi-chain support. Deploy in 60 minutes.
+          vercel + supabase + web3
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
           <Button size="lg" className="px-8 py-3" asChild>
             <a href="/guide">
-              Quick Start (60 min)
+              Get the Guide
             </a>
           </Button>
           <Button size="lg" variant="outline" className="px-8 py-3" asChild>
             <a href="https://github.com/gitdevdapp/vercel-supabase-web3-start" target="_blank" rel="noreferrer">
-              Clone on GitHub
+              Source Code
             </a>
           </Button>
         </div>

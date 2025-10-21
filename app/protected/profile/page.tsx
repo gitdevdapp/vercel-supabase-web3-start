@@ -4,6 +4,7 @@ import { getOrCreateProfile } from "@/lib/profile";
 import { SimpleProfileForm } from "@/components/simple-profile-form";
 import { ProfileWalletCard } from "@/components/profile-wallet-card";
 import { CollapsibleGuideAccess } from "@/components/profile/CollapsibleGuideAccess";
+import { StakingCardWrapper } from "@/components/staking/StakingCardWrapper";
 import { InfoIcon } from "lucide-react";
 
 export default async function ProfilePage() {
@@ -46,8 +47,14 @@ export default async function ProfilePage() {
           <SimpleProfileForm profile={profile} userEmail={userEmail} />
         </div>
         
-        {/* Right Column: Wallet (Desktop main area, Mobile below profile) */}
+        {/* Right Column: Staking & Wallet (Desktop main area, Mobile below profile) */}
         <div className="w-full">
+          {/* Staking Card */}
+          <div className="mb-6">
+            <StakingCardWrapper />
+          </div>
+
+          {/* Wallet Card */}
           <ProfileWalletCard />
         </div>
       </div>

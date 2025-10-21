@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu, User } from "lucide-react";
+import { Menu, User, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,14 +12,42 @@ import {
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 
 interface ProfileMenuProps {
   userEmail?: string;
   showGuideButton?: boolean;
 }
 
+interface StakingStatus {
+  has_superguide_access: boolean;
+}
+
 export function ProfileMenu({ userEmail, showGuideButton = false }: ProfileMenuProps) {
   const router = useRouter();
+  const [stakingStatus, setStakingStatus] = useState<StakingStatus | null>(null);
+
+  // Fetch staking status
+  useEffect(() => {
+    const fetchStakingStatus = async () => {
+      try {
+        const response = await fetch('/api/staking/status');
+
+        if (response.ok) {
+          const data = await response.json();
+          setStakingStatus(data);
+        } else if (response.status === 401) {
+          // User not authenticated, this is expected
+          setStakingStatus(null);
+        }
+      } catch (error) {
+        console.error('Error fetching staking status:', error);
+        setStakingStatus(null);
+      }
+    };
+
+    fetchStakingStatus();
+  }, []);
 
   const handleLogout = async () => {
     const supabase = createClient();
@@ -61,7 +89,17 @@ export function ProfileMenu({ userEmail, showGuideButton = false }: ProfileMenuP
             </Link>
           </DropdownMenuItem>
         )}
-        
+
+        {/* Super Guide - conditionally shown based on staking status */}
+        {stakingStatus?.has_superguide_access && (
+          <DropdownMenuItem asChild>
+            <Link href="/superguide" className="cursor-pointer">
+              <Star className="h-4 w-4 mr-2" />
+              Super Guide
+            </Link>
+          </DropdownMenuItem>
+        )}
+
         <DropdownMenuItem asChild>
           <Link href="/protected/profile" className="cursor-pointer">
             Profile
