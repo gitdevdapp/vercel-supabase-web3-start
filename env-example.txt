@@ -13,6 +13,12 @@ CDP_API_KEY_ID=your-cdp-api-key-id
 CDP_API_KEY_SECRET=your-cdp-api-key-secret
 NEXT_PUBLIC_WALLET_NETWORK=base-sepolia
 
+# ERC721 Deployment Configuration
+# Private key of a funded account on Base Sepolia (with at least 0.01 ETH)
+# Used to deploy real ERC721 contracts to Base Sepolia testnet
+# FORMAT: 0x followed by 64 hex characters (no leading 0x in some formats)
+CDP_DEPLOYER_PRIVATE_KEY=0xyour-funded-deployer-private-key-here
+
 # AI Service Configuration
 OPENAI_API_KEY=your-openai-key
 
