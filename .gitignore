@@ -79,3 +79,6 @@ coverage/
 next-env.d.ts
 .env.local
 scripts-credentials-audit.md
+
+# Supabase credentials reference file - NEVER commit
+supabase-credentials.txt
