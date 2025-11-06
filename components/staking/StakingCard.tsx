@@ -17,13 +17,13 @@ interface StakingStatus {
 
 export function StakingCard() {
   const [stakingStatus, setStakingStatus] = useState<StakingStatus>({
-    rair_balance: 7000, // TEMP: updated after staking 3000
-    rair_staked: 3000,
-    has_superguide_access: true
+    rair_balance: 0,
+    rair_staked: 0,
+    has_superguide_access: false
   });
   const [amount, setAmount] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingStatus, setIsLoadingStatus] = useState(false); // TEMP: set to false
+  const [isLoadingStatus, setIsLoadingStatus] = useState(true); // Show loading while fetching initial status
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Fetch staking status
@@ -57,7 +57,7 @@ export function StakingCard() {
   };
 
   useEffect(() => {
-    // fetchStakingStatus(); // TEMP: disabled for testing
+    fetchStakingStatus();
   }, []);
 
   // Clear message after 3 seconds
@@ -80,10 +80,10 @@ export function StakingCard() {
       return;
     }
 
-    if (stakeAmount > stakingStatus.rair_balance) {
+    if (stakeAmount > availableBalance) {
       setMessage({
         type: 'error',
-        text: "You don't have enough RAIR tokens to stake this amount."
+        text: "You don't have enough available RAIR tokens to stake this amount."
       });
       return;
     }
@@ -101,11 +101,17 @@ export function StakingCard() {
       const data = await response.json();
 
       if (response.ok && data.success) {
-        setStakingStatus({
-          rair_balance: data.rair_balance,
-          rair_staked: data.rair_staked,
-          has_superguide_access: data.rair_staked >= 3000
-        });
+        // Validate we have balance data before updating
+        if (data.rair_balance !== undefined && data.rair_staked !== undefined) {
+          setStakingStatus({
+            rair_balance: Math.max(0, data.rair_balance),
+            rair_staked: Math.max(0, data.rair_staked),
+            has_superguide_access: data.rair_staked >= 3000
+          });
+        } else {
+          // If balance data not returned, refetch it
+          await fetchStakingStatus();
+        }
         setAmount('');
 
         setMessage({
@@ -162,11 +168,17 @@ export function StakingCard() {
       const data = await response.json();
 
       if (response.ok && data.success) {
-        setStakingStatus({
-          rair_balance: data.rair_balance,
-          rair_staked: data.rair_staked,
-          has_superguide_access: data.rair_staked >= 3000
-        });
+        // Validate we have balance data before updating
+        if (data.rair_balance !== undefined && data.rair_staked !== undefined) {
+          setStakingStatus({
+            rair_balance: Math.max(0, data.rair_balance),
+            rair_staked: Math.max(0, data.rair_staked),
+            has_superguide_access: data.rair_staked >= 3000
+          });
+        } else {
+          // If balance data not returned, refetch it
+          await fetchStakingStatus();
+        }
         setAmount('');
 
         setMessage({
@@ -192,15 +204,18 @@ export function StakingCard() {
 
   // Handle quick stake 3000
   const handleQuickStake = () => {
-    if (stakingStatus.rair_balance >= 3000) {
+    const availableBalance = stakingStatus.rair_balance - stakingStatus.rair_staked;
+    if (availableBalance >= 3000) {
       setAmount('3000');
     } else {
       setMessage({
         type: 'error',
-        text: 'You need at least 3,000 RAIR tokens to use quick stake.'
+        text: 'You need at least 3,000 RAIR tokens available to stake.'
       });
     }
   };
+
+  const availableBalance = stakingStatus.rair_balance - stakingStatus.rair_staked;
 
   const progressPercentage = stakingStatus.rair_staked > 0
     ? Math.min((stakingStatus.rair_staked / 3000) * 100, 100)
@@ -237,7 +252,7 @@ export function StakingCard() {
           <div className="text-center p-4 bg-muted/50 rounded-lg">
             <div className="text-sm text-muted-foreground">Available</div>
             <div className="text-2xl font-bold">
-              {stakingStatus.rair_balance.toLocaleString()}
+              {availableBalance.toLocaleString()}
             </div>
             <div className="text-sm text-muted-foreground">RAIR</div>
           </div>
@@ -319,7 +334,7 @@ export function StakingCard() {
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 min="0"
-                max={stakingStatus.rair_staked > 0 ? stakingStatus.rair_staked : stakingStatus.rair_balance}
+                max={stakingStatus.rair_staked > 0 ? stakingStatus.rair_staked : availableBalance}
                 disabled={isLoading}
               />
               <Button
@@ -340,7 +355,7 @@ export function StakingCard() {
                 isLoading ||
                 !amount ||
                 parseInt(amount) <= 0 ||
-                parseInt(amount) > stakingStatus.rair_balance
+                parseInt(amount) > availableBalance
               }
               className="flex-1"
             >

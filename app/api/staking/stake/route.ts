@@ -66,21 +66,24 @@ export async function POST(request: NextRequest) {
     // Fetch updated staking status after successful stake
     const { data: updatedStatus, error: statusError } = await supabase.rpc('get_staking_status');
 
-    if (statusError) {
+    if (statusError || !updatedStatus || updatedStatus.length === 0) {
       console.error('Error fetching updated status:', statusError);
       // Still return success since the stake worked
       return NextResponse.json({
         success: true,
         amount: amount,
-        message: "Staked successfully, but failed to refresh status"
+        message: "Staked successfully"
+        // Don't include balance - let frontend refetch
       });
     }
 
+    // updatedStatus is an array from the function's RETURNS TABLE
+    const status = updatedStatus[0];
     return NextResponse.json({
       success: true,
-      rair_balance: updatedStatus.rair_balance || 0,
-      rair_staked: updatedStatus.rair_staked || 0,
-      has_superguide_access: updatedStatus.has_superguide_access || false,
+      rair_balance: status?.rair_balance || 0,
+      rair_staked: status?.rair_staked || 0,
+      has_superguide_access: (status?.rair_staked || 0) >= 3000,
       amount: amount
     });
 
