@@ -1,306 +1,294 @@
-# 🌐 Multi-Chain Web3 Starter Kit
+# 🚀 EVM Web3 dApp - AI Agent Setup Guide
 
-> **Production-ready Web3 dApp framework supporting 6+ blockchains with enterprise authentication**
+> **Production-ready Web3 dApp with authentication, wallet management, and EVM network support powered by Coinbase Developer Platform**
 
-A comprehensive Web3 development platform that enables you to build and deploy multi-chain dApps in minutes. Features integrated wallet management, secure user authentication, and pre-built pages for major blockchain ecosystems.
+This starter kit provides enterprise-grade Web3 infrastructure with Coinbase Developer Platform integration for wallet management and smart contract deployment on EVM networks. Includes user authentication, NFT contract deployment, and multi-chain EVM integration.
 
-## 🏗️ How It Works
+## ⚡ Critical Setup Requirements
 
-### 🚀 **Deploy Production dApp in 60 Minutes**
+### 🔑 Required Accounts & Services
+- **Supabase Account** - PostgreSQL database with Row Level Security
+- **Vercel Account** - Deployment and hosting platform
+- **Coinbase Developer Platform Account** - Wallet management and smart contract deployment
 
-<div align="center">
-  <img src="assets/01-dev-process.svg" alt="Deploy Production dApp in 60 Minutes" width="100%" />
-</div>
+### 🗄️ Supabase Database Setup
 
-**Simple 4-step process**: Setup repository → Configure database → Add Web3 integration → Deploy live
+**Create new Supabase project with following configuration:**
+- Project name: Your application identifier
+- Strong database password
+- Region: Closest to target users
 
----
+**Execute database migration:**
+- Access SQL Editor in Supabase dashboard
+- Execute complete migration script: `scripts/master/00-ULTIMATE-MIGRATION.sql`
+- Verify "ULTIMATE MIGRATION V4 COMPLETE" confirmation
 
-### 🏛️ **Multi-Chain Platform Architecture**
+![SQL Migration Script](docs/assets/script.png)
 
-<div align="center">
-  <img src="assets/06-system-architecture.svg" alt="Multi-Chain Platform Architecture" width="100%" />
-</div>
+**Result**: Fully configured PostgreSQL database with Row Level Security, user tables, wallet tables, and NFT contract tracking.
 
-**Enterprise-grade stack**: Next.js 15 + Supabase + 6 blockchains + AI-powered automation
+### 🔑 Critical Environment Configuration
 
----
-
-### 🔄 **Smart Code Quality System**
-
-<div align="center">
-  <img src="assets/02-ai-process.svg" alt="Smart Code Quality System" width="100%" />
-</div>
-
-**Automated quality tracking**: Monitor contributions → Score quality → Distribute rewards → Improve framework
-
----
-
-### 🧠 **AI-Powered Contribution Rewards**
-
-<div align="center">
-  <img src="assets/05-ai-assessment-system.svg" alt="AI-Powered Contribution Assessment" width="100%" />
-</div>
-
-**Intelligent assessment**: AI evaluates code quality, impact & innovation → Calculates fair blockchain rewards
-
----
-
-### 💰 **Earn Native Tokens for Code Contributions**
-
-<div align="center">
-  <img src="assets/03-reward-flow.svg" alt="Earn Native Tokens for Code Contributions" width="100%" />
-</div>
-
-**Contributors earn real cryptocurrency**: Submit code → Quality check → Token payout → Community growth
-
----
-
-### 🎯 **Why Choose This Web3 Starter Kit**
-
-<div align="center">
-  <img src="assets/04-key-benefits.svg" alt="Why Choose This Web3 Starter Kit" width="100%" />
-</div>
-
-**10x faster development** with enterprise security, multi-chain support, and smart automation
-
-**🎯 This is a starter template** - Replace placeholders with your own branding and deploy your multi-chain dApp in minutes.
-
----
-
-## ✨ What You Get
-
-- 🔗 **Multi-Chain Support** - Avalanche, ApeChain, Flow, Tezos, Stacks, ROOT Network
-- 💼 **X402 Wallet Manager** - Full wallet functionality with Coinbase Developer Platform
-- 🔐 **Enterprise Authentication** - Supabase-powered with email verification and profile management
-- 👤 **Advanced Profiles** - Rich user profiles with automatic creation and management
-- 🎨 **Modern UI/UX** - Beautiful, responsive design with dark/light mode support
-- 🚀 **Zero-Config Deployment** - Deploy to Vercel with automated CI/CD
-- 🛡️ **Enterprise Security** - Row-level security, input validation, and secure session management
-- 📱 **Mobile-First** - Optimized for all devices and screen sizes
-
-## 🎯 Perfect For
-
-- **Multi-chain dApp developers** building cross-ecosystem applications
-- **Web3 entrepreneurs** launching production-ready platforms
-- **Blockchain teams** needing secure user management and wallet integration
-- **Traditional developers** transitioning to Web3 with best practices
-- **DeFi projects** requiring professional infrastructure foundations
-
----
-
-## 🚀 Quick Start - Deploy in 60 Minutes
-
-**🎯 Deploy your production-ready multi-chain Web3 dApp in under an hour!**
-
-### Three Simple Steps:
-
-1. **Create Accounts** (5 min) - Get free Supabase and Vercel accounts
-2. **Set Up Database** (15 min) - Run one SQL script to create your user system  
-3. **Deploy to Production** (15 min) - Push to GitHub, connect Vercel, go live!
-
-### 📖 Complete Setup Guide
-
-**👉 [Follow the Complete Deployment Guide](docs/deployment/README.md) 👈**
-
-The deployment guide includes:
-- ✅ **SQL Editor Setup** - Complete database schema with user profiles
-- ✅ **PKCE Authentication** - Working email confirmation flow
-- ✅ **Email Templates** - Professional branded confirmation emails  
-- ✅ **Environment Configuration** - All required variables and settings
-- ✅ **Production Deployment** - Vercel deployment with custom domains
-- ✅ **Troubleshooting** - Solutions for common setup issues
-
-### Quick Environment Setup
-
-While following the guide, you'll need these environment variables:
+**Required Environment Variables:**
 
 ```bash
-# Get these from your Supabase project dashboard
-NEXT_PUBLIC_SUPABASE_URL=https://your-project-id.supabase.co
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY=your-anon-key-here
+# Supabase Database Access
+NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY=your-anon-key-jwt
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-jwt
 
-# Optional: Enable Web3 wallet features
-CDP_API_KEY_NAME=your-cdp-api-key-name
-CDP_PRIVATE_KEY=your-cdp-private-key
-NEXT_PUBLIC_ENABLE_CDP_WALLETS=false
+# Application URLs
+NEXT_PUBLIC_APP_URL=https://your-deployed-app.vercel.app
+
+# Coinbase Developer Platform (CDP) - Wallet Management
+CDP_API_KEY_ID=your-cdp-api-key-identifier
+CDP_API_KEY_SECRET=your-cdp-api-key-secret
+CDP_WALLET_SECRET=your-cdp-wallet-secret
+
+# Deployer Wallet - Smart Contract Deployment
+DEPLOYER_PRIVATE_KEY=0xyour-64-character-hex-private-key
+NEXT_PUBLIC_DEPLOYER_ADDRESS=0xyour-40-character-wallet-address
 ```
 
-### What You Get After Setup
+**Security Requirements:**
+- `CDP_API_KEY_SECRET` and `DEPLOYER_PRIVATE_KEY` must never be committed to version control
+- Use separate keys for development and production environments
+- Implement proper key rotation policies
 
-- 🔐 **Complete Authentication** - Email signup/login with confirmation
-- 👤 **Automatic Profiles** - Rich user profiles created automatically  
-- 🛡️ **Enterprise Security** - Row-level security protecting user data
-- 🌐 **Multi-Chain Pages** - Pre-built pages for 6+ blockchains
-- 📱 **Mobile Responsive** - Works perfectly on all devices
-- 🚀 **Production Ready** - Scalable infrastructure on Vercel
+### 📧 Authentication Configuration
 
-### Test Your Deployment
+**Supabase Auth Setup Requirements:**
 
-After following the guide:
+- **Email Templates**: Configure signup confirmation template with the following HTML:
 
-1. Visit your deployed app
-2. Sign up with a test email 
-3. Check email for confirmation link
-4. Click link → Should redirect to your profile page
-5. Edit your profile → Changes should save automatically
-6. Test blockchain pages → All should load correctly
+```html
+<h2>🎉 Welcome to DevDapp!</h2>
+<p>Thanks for signing up! Click the button below to confirm your email and start using DevDapp:</p>
 
-**Need help?** The [deployment guide](docs/deployment/README.md) includes comprehensive troubleshooting and success verification steps.
+<div style="text-align: center; margin: 30px 0;">
+  <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=signup&next=/protected/profile"
+     style="display: inline-block; padding: 15px 30px; background: linear-gradient(135deg, #0070f3 0%, #0051cc 100%); color: white; text-decoration: none; border-radius: 8px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(0, 112, 243, 0.3);">
+    ✅ Confirm Email & Start Using DevDapp
+  </a>
+</div>
+
+<!-- PKCE-Compatible Email Confirmation URL -->
+<a href="{{ .SiteURL }}/auth/confirm?code={{ .Token }}&next=/protected/profile">
+  ✅ Confirm Email & Start Using DevDapp
+</a>
+
+<div style="background: #f0f9ff; padding: 20px; border-radius: 8px; border-left: 4px solid #0ea5e9; margin: 25px 0;">
+  <h3 style="margin: 0 0 10px 0; color: #0c4a6e; font-size: 16px;">🚀 What you'll get access to:</h3>
+  <ul style="margin: 0; padding-left: 20px; color: #0c4a6e;">
+    <li>🏦 Create and manage crypto wallets</li>
+    <li>💰 Send and receive USDC transfers</li>
+    <li>🔗 Connect to multiple blockchain networks</li>
+    <li>📊 Track your portfolio and transactions</li>
+    <li>🛡️ Enterprise-grade security</li>
+  </ul>
+</div>
+
+<p style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+  <strong>Backup Link:</strong> If the button doesn't work, copy and paste this link:
+</p>
+<p style="word-break: break-all; background: #f8f9fa; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 12px;">
+  {{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=signup&next=/protected/profile
+</p>
+
+<div style="margin-top: 30px; padding: 15px; background: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px;">
+  <p style="margin: 0; font-size: 14px;">
+    <strong>⏰ Important:</strong> This link will expire in 24 hours for security.
+  </p>
+</div>
+
+<p style="margin-top: 20px; font-size: 13px; color: #666;">
+  If you didn't create an account, you can safely ignore this email.
+</p>
+
+<div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e0e0e0; text-align: center; font-size: 12px; color: #888;">
+  <p>DevDapp • <a href="https://devdapp.com" style="color: #0070f3;">devdapp.com</a></p>
+</div>
+```
+
+- **Site URL**: Set to production Vercel deployment URL
+- **Redirect URLs**:
+  - `https://your-app.vercel.app/auth/callback`
+  - `https://your-app.vercel.app/protected/profile`
+  - Include local development URL during development
+
+![Redirect URLs Configuration](docs/assets/redirecturls.png)
+
+**Result**: Secure email-based authentication with automatic user profile creation.
+
+### 🪣 Supabase Storage Configuration
+
+**Create private storage bucket:**
+- Bucket name: `profile-images`
+- Access: Private (not public)
+- File size limit: 5MB maximum
+
+![Create Storage Bucket](docs/assets/bucket.png)
+
+![Storage Bucket Created](docs/assets/storage.png)
+
+**Result**: Secure file storage for user profile images with Row Level Security.
+
+### 🚀 Vercel Deployment Configuration
+
+**Environment Variables Required in Vercel:**
+
+- **Supabase Configuration:**
+  - `NEXT_PUBLIC_SUPABASE_URL`
+  - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY`
+  - `SUPABASE_SERVICE_ROLE_KEY`
+- **Application Configuration:**
+  - `NEXT_PUBLIC_APP_URL`
+- **Coinbase Developer Platform (CDP):**
+  - `CDP_API_KEY_ID`
+  - `CDP_API_KEY_SECRET`
+  - `CDP_WALLET_SECRET`
+- **NFT Deployment (Deployer Wallet):**
+  - `DEPLOYER_PRIVATE_KEY`
+  - `NEXT_PUBLIC_DEPLOYER_ADDRESS`
+
+**Security Configuration:**
+- Set `CDP_API_KEY_SECRET` and `DEPLOYER_PRIVATE_KEY` for Production environment only
+- Use separate, limited-permission keys for production deployment
+- Enable 2FA on Vercel account
+
+**Result**: Live Web3 dApp with all EVM features and wallet management enabled.
+
+### ✅ System Validation Requirements
+
+**Core Functionality Verification:**
+
+- **Authentication Flow**: Email signup → confirmation → profile access
+- **User Profiles**: Create, edit, and save user data with image uploads
+- **EVM Network Access**: All blockchain pages load and display network information
+- **Wallet Management**: CDP wallet creation and management interfaces functional
+- **NFT Deployment**: Smart contract deployment interface accessible
+
+**Expected System State**: Fully operational Web3 dApp with authenticated users, wallet management, and EVM network connectivity.
+
+## 🛠️ Coinbase Developer Platform (CDP) Configuration
+
+**API Keys Setup:**
+- Create CDP account at [portal.cdp.coinbase.com](https://portal.cdp.coinbase.com/)
+- Generate API key with Read/Write permissions
+- Securely store API Key ID and Secret
+
+![CDP API Keys](docs/assets/cdp-keys.png)
+
+**Deployer Wallet Creation:**
+- Create dedicated wallet in CDP dashboard for NFT contract deployment
+- Target network: Base (or preferred EVM network)
+- Retrieve and securely store:
+  - Wallet address (0x... format)
+  - Private key (64-character hex string)
+- Fund wallet with sufficient ETH for gas fees (0.1-1 ETH recommended)
+
+**Environment Integration:**
+- Configure all CDP credentials in environment variables
+- Implement proper key security and rotation policies
+- Separate development and production key sets
+
+**Critical Security Notes:**
+- Private keys never committed to version control
+- Environment-specific key management
+- Regular key rotation implemented
 
 ---
 
 ## 🏗️ Architecture Overview
 
-### Multi-Chain Pages
-- **[ROOT Network](/root)** - Native ROOT blockchain integration
-- **[Avalanche](/avalanche)** - AVAX ecosystem and subnets
-- **[ApeChain](/apechain)** - APE token and NFT integration
-- **[Flow](/flow)** - Flow blockchain and NFT marketplace
-- **[Tezos](/tezos)** - Tezos smart contracts and DeFi
-- **[Stacks](/stacks)** - Bitcoin-based smart contracts
+### What You Get
 
-### Core Features
-- **[X402 Wallet](/wallet)** - Multi-chain wallet management
-- **[Profile System](/protected/profile)** - User profile management
-- **Authentication Flow** - Secure login/signup with email verification
+- **🔐 Authentication System** - Email signup/login with secure confirmation
+- **👤 User Profiles** - Rich profiles with automatic database creation
+- **💼 Wallet Management** - Coinbase Developer Platform integration for creating and managing EVM wallets
+- **🪙 NFT Contract Deployment** - Deploy ERC721 NFT smart contracts to any EVM network
+- **🌐 Multi-Chain EVM Support** - Native support for all EVM-compatible networks:
+  - **Base** - Coinbase's Layer 2 network
+  - **Avalanche (C-Chain)** - Fast, low-cost EVM network
+  - **Ethereum** - Mainnet and testnets (Sepolia, Goerli)
+  - **Polygon** - Scaling solution with EVM compatibility
+  - **Optimism & Arbitrum** - Layer 2 rollup networks
+  - **And 100+ other EVM chains** - Any network supporting Ethereum RPC
+- **🎨 Smart Contract Management** - Deploy, verify, and track contracts
+- **🛡️ Enterprise Security** - Row-level security and input validation
+- **📱 Mobile-First Design** - Responsive across all devices
+- **🚀 Production Infrastructure** - Scalable hosting on Vercel
 
 ### Technical Stack
+
 - **Frontend**: Next.js 15 with React 19 and TypeScript
-- **Styling**: Tailwind CSS with dark/light mode support
 - **Database**: Supabase PostgreSQL with Row Level Security
-- **Authentication**: Supabase Auth with implicit flow
+- **Authentication**: Supabase Auth with email verification
+- **Wallet Management**: Coinbase Developer Platform SDK
+- **Smart Contracts**: ERC721 NFT standards with Hardhat deployment
+- **EVM Interaction**: Ethers.js and Web3.js for blockchain calls
 - **Deployment**: Vercel with automatic CI/CD
-- **Web3 Libraries**: Ethers.js, Coinbase CDP SDK, Solana Web3.js
+- **Styling**: Tailwind CSS with dark/light mode support
 
 ---
 
-## 🔧 Development Workflow
+## 🐛 Critical System Issues & Resolutions
 
-```bash
-# Install dependencies
-npm install
+**Database Connectivity:**
+- Validate all Supabase environment variables
+- Confirm database migration completed successfully
+- Check Supabase project health status
 
-# Start development server
-npm run dev
+**Authentication Failures:**
+- Verify Supabase callback URL configuration
+- Confirm email template settings
+- Validate NEXT_PUBLIC_APP_URL matches deployment domain
 
-# Run tests
-npm test
+**Web3 Integration Issues:**
+- Verify CDP API keys are active and have correct permissions
+- Confirm deployer wallet has sufficient funds
+- Check EVM network connectivity
 
-# Build for production
-npm run build
-
-# Verify environment setup
-npm run verify-env
-
-# Set up database (alternative to SQL editor)
-npm run setup-db
-```
-
-### Available Scripts
-
-- `npm run dev` - Development server with hot reload
-- `npm run build` - Production build
-- `npm run test` - Run test suite
-- `npm run test:integration` - Integration tests
-- `npm run test:production` - Production environment tests
-- `npm run setup-db` - Database setup helper
-- `npm run verify-env` - Environment validation
+**Deployment Failures:**
+- Validate all required environment variables configured in Vercel
+- Confirm build process completes without errors
+- Check for missing dependencies or configuration conflicts
 
 ---
 
-## 🛡️ Security Features
+## 📋 System Extension Capabilities
 
-### Database Security
-- **Row Level Security (RLS)** - Users can only access their own data
-- **Input Validation** - Comprehensive constraints on all user inputs
-- **SQL Injection Protection** - Parameterized queries and prepared statements
-- **Secure Functions** - SECURITY DEFINER functions with proper access control
+**Core Web3 Features:**
+- NFT contract deployment and management via deployer wallet
+- Multi-EVM network expansion (Base, Ethereum, Polygon, Avalanche, etc.)
+- Advanced DeFi integrations and staking mechanisms
+- Cross-chain bridge implementations
 
-### Authentication Security
-- **Implicit Flow** - Optimized for email-based authentication workflows
-- **Email Verification** - Required email confirmation for account activation
-- **Session Management** - Secure JWT tokens with automatic refresh
-- **Protected Routes** - Middleware-enforced authentication
+**Infrastructure Scaling:**
+- Performance optimization and gas cost management
+- Enhanced monitoring and analytics integration
+- Load balancing and database scaling strategies
 
-### Application Security
-- **Environment Variables** - Secure handling of sensitive configuration
-- **HTTPS Everywhere** - SSL/TLS encryption for all communications
-- **CSP Headers** - Content Security Policy for XSS protection
-- **CORS Configuration** - Proper cross-origin resource sharing setup
+## 🔒 Production Security Requirements
 
----
+**Key Management:**
+- Implement regular CDP API key rotation
+- Separate development and production key environments
+- Secure private key storage with hardware security modules
 
-## 📚 Documentation
+**Operational Security:**
+- Test all smart contracts on testnets before mainnet deployment
+- Maintain minimal necessary funds in deployer wallets
+- Enable 2FA on all service accounts (Coinbase, Vercel, Supabase)
+- Implement comprehensive transaction monitoring
 
-### Quick References
-- **[Deployment Guide](docs/deployment/)** - Step-by-step deployment instructions
-- **[Database Setup](docs/deployment/CANONICAL_SETUP.md)** - Complete database configuration
-- **[Troubleshooting](docs/deployment/SUPABASE-UI-FIX-GUIDE.md)** - Common issues and solutions
-
-### Advanced Configuration
-- **[Production Setup](docs/deployment/PRODUCTION-SETUP-INSTRUCTIONS.md)** - Production deployment guide
-- **[Email Templates](docs/deployment/SUPABASE-EMAIL-TEMPLATE-FIX-INSTRUCTIONS.md)** - Email customization
-- **[Testing Guide](docs/testing/)** - Comprehensive testing strategies
+**Dependency Management:**
+- Regular security updates for all packages
+- Automated vulnerability scanning integration
+- Dependency version pinning and audit processes
 
 ---
 
-## 🎯 Feature Roadmap
+**🎉 System Ready**: Enterprise-grade EVM Web3 dApp with secure authentication, wallet management, and NFT deployment capabilities operational.
 
-### Current Features ✅
-- Multi-chain blockchain pages with dedicated UIs
-- X402 wallet manager with Coinbase CDP integration
-- Complete authentication system with email verification
-- Advanced user profiles with automatic creation
-- Enterprise-grade security and performance
-- Mobile-responsive design with theme support
-
-### Upcoming Features 🚧
-- Smart contract interaction templates
-- DeFi protocol integrations
-- NFT marketplace components
-- Cross-chain transaction support
-- Advanced analytics and monitoring
-- AI-powered user assistance
-
----
-
-## 🤝 Getting Help
-
-### Quick Issues
-- Check the [troubleshooting guide](docs/deployment/SUPABASE-UI-FIX-GUIDE.md)
-- Run `npm run verify-env` to check configuration
-- Review Supabase logs for authentication issues
-
-### Common Solutions
-- **Build Errors**: Run `npm run lint && npm run build` locally
-- **Auth Issues**: Verify redirect URLs in Supabase settings
-- **Database Errors**: Check RLS policies and user permissions
-- **Environment Issues**: Ensure all required variables are set
-
-### Support Resources
-- **[Supabase Documentation](https://supabase.com/docs)**
-- **[Vercel Documentation](https://vercel.com/docs)**
-- **[Next.js Documentation](https://nextjs.org/docs)**
-
----
-
-## 🎉 Success Metrics
-
-With this multi-chain Web3 starter kit, you achieve:
-
-- **⚡ 60-minute deployment** from clone to production  
-- **🔒 Enterprise security** with zero configuration required
-- **✅ Working email authentication** with bulletproof confirmation flow
-- **🌍 Multi-chain support** for major blockchain ecosystems
-- **📱 Mobile-first design** reaching users on any device
-- **🚀 Scalable architecture** supporting thousands of concurrent users
-- **💰 Cost-effective hosting** starting at $0-20/year
-
----
-
-**Ready to launch your multi-chain dApp?** 
-
-Follow the Quick Start guide above and you'll have a production-ready Web3 platform supporting 6+ blockchains in under an hour.
-
-*This starter kit provides everything you need to launch your Web3 dApp across multiple blockchains. Deploy your own instance and start building today.*
+*AI Agent Configuration Complete: Full Web3 infrastructure deployed and secured.*

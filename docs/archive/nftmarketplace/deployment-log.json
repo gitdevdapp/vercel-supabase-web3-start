@@ -1,0 +1,74 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2025-10-29T00:00:00Z",
+  "network": "base-sepolia",
+  "deployer": "0x467307D37E44db042010c11ed2cFBa4773137640",
+  "deployments": [
+    {
+      "id": 1,
+      "address": "0x5002b5ce47583334fc8789c7702adfa220ebeaaa",
+      "contractName": "SimpleERC721",
+      "network": "base-sepolia",
+      "chainId": 84532,
+      "deploymentTxHash": "0x17723b9...",
+      "deploymentTimestamp": "2025-10-28T10:30:00Z",
+      "deploymentBlock": 12345,
+      "constructorArgs": {
+        "name": "Example NFT",
+        "symbol": "EXNFT",
+        "maxSupply": 100,
+        "mintPrice": "0",
+        "baseURI": "https://example.com/metadata/"
+      },
+      "verified": false,
+      "verifiedAt": null,
+      "verificationStatus": "pending",
+      "verificationAttempts": 0,
+      "verificationError": null,
+      "explorerUrl": "https://sepolia.basescan.org/address/0x5002b5ce47583334fc8789c7702adfa220ebeaaa",
+      "notes": "Example contract - update with actual deployments"
+    },
+    {
+      "id": 2,
+      "address": "0x0055C0AC5dd5018aB52D811d6D0751810ECDadbC",
+      "contractName": "SimpleERC721",
+      "network": "base-sepolia",
+      "chainId": 84532,
+      "deploymentTxHash": "0x...",
+      "deploymentTimestamp": "2025-10-28T11:00:00Z",
+      "deploymentBlock": 12350,
+      "constructorArgs": {
+        "name": "Example NFT 2",
+        "symbol": "EXNFT2",
+        "maxSupply": 500,
+        "mintPrice": "1000000000000000",
+        "baseURI": "https://example.com/metadata/"
+      },
+      "verified": false,
+      "verifiedAt": null,
+      "verificationStatus": "pending",
+      "verificationAttempts": 0,
+      "verificationError": null,
+      "explorerUrl": "https://sepolia.basescan.org/address/0x0055C0AC5dd5018aB52D811d6D0751810ECDadbC",
+      "notes": "Example contract - update with actual deployments"
+    }
+  ],
+  "summary": {
+    "totalDeployed": 2,
+    "totalVerified": 0,
+    "totalFailed": 0,
+    "verificationRate": "0%",
+    "pendingVerification": 2
+  },
+  "instructions": {
+    "addingNewDeployment": "When a new contract is deployed, add an entry to the deployments array with all constructor args",
+    "verification": "Run: node scripts/contract-verification.js verify <address> <args...>",
+    "checkStatus": "Run: node scripts/contract-verification.js status <address>",
+    "listContracts": "Run: node scripts/contract-verification.js list"
+  }
+}
+
+
+
+
+

@@ -1,8 +1,9 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getOrCreateProfile } from "@/lib/profile";
-import { SimpleProfileForm } from "@/components/simple-profile-form";
-import { ProfileWalletCard } from "@/components/profile-wallet-card";
+import { UnifiedProfileWalletCard } from "@/components/profile/UnifiedProfileWalletCard";
+import { NFTCreationCard } from "@/components/profile/NFTCreationCard";
+import { MyCollectionsPreview } from "@/components/profile/MyCollectionsPreview";
 import { CollapsibleGuideAccess } from "@/components/profile/CollapsibleGuideAccess";
 import { StakingCardWrapper } from "@/components/staking/StakingCardWrapper";
 import { InfoIcon } from "lucide-react";
@@ -40,22 +41,26 @@ export default async function ProfilePage() {
       {/* Collapsible Guide Access Banner */}
       <CollapsibleGuideAccess />
       
-      {/* Desktop: Two-column layout, Mobile: Stacked */}
-      <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-6">
-        {/* Left Column: Profile (Desktop sidebar, Mobile top) */}
-        <div className="w-full">
-          <SimpleProfileForm profile={profile} userEmail={userEmail} />
+      {/* Desktop: Two-column layout, Mobile: Stacked with custom order */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-4">
+        {/* Right Column Wrapper - Unified Profile & Wallet Card (First on mobile) */}
+        <div className="order-1 lg:order-none lg:col-start-2 lg:row-start-1 lg:row-span-2 lg:self-start">
+          <UnifiedProfileWalletCard profile={profile} userEmail={userEmail} />
         </div>
-        
-        {/* Right Column: Staking & Wallet (Desktop main area, Mobile below profile) */}
-        <div className="w-full">
-          {/* Staking Card */}
-          <div className="mb-6">
-            <StakingCardWrapper />
-          </div>
 
-          {/* Wallet Card */}
-          <ProfileWalletCard />
+        {/* Staking Card */}
+        <div className="order-2 lg:order-none lg:col-start-1 lg:row-start-1">
+          <StakingCardWrapper />
+        </div>
+
+        {/* NFT Creation Card - Order 3 on mobile (moved to bottom) */}
+        <div className="order-3 lg:order-none lg:col-start-1 lg:row-start-2">
+          <NFTCreationCard />
+        </div>
+
+        {/* My Collections Preview - Order 4 on mobile */}
+        <div className="order-4 lg:order-none lg:col-start-1 lg:row-start-3">
+          <MyCollectionsPreview />
         </div>
       </div>
     </div>

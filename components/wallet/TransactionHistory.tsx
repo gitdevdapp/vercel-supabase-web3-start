@@ -14,6 +14,7 @@ interface Transaction {
   tx_hash: string | null;
   status: string;
   created_at: string;
+  contract_address?: string | null;
 }
 
 interface TransactionHistoryProps {
@@ -26,6 +27,8 @@ export function TransactionHistory({ walletId }: TransactionHistoryProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   const loadTransactions = async () => {
     try {
@@ -45,6 +48,7 @@ export function TransactionHistory({ walletId }: TransactionHistoryProps) {
       
       const data = await response.json();
       setTransactions(data.transactions || []);
+      setCurrentPage(1); // Reset pagination to page 1
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load transactions");
     } finally {
@@ -63,6 +67,21 @@ export function TransactionHistory({ walletId }: TransactionHistoryProps) {
     loadTransactions();
   };
 
+  // Pagination calculations
+  const totalPages = Math.ceil(transactions.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedTransactions = transactions.slice(startIndex, endIndex);
+
+  // Pagination navigation
+  const goToNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
   const getStatusIcon = (status: string) => {
     switch (status.toLowerCase()) {
       case "success":
@@ -79,7 +98,11 @@ export function TransactionHistory({ walletId }: TransactionHistoryProps) {
       case "send":
         return <TrendingDown className="h-4 w-4" />;
       case "fund":
+      case "super_faucet":
       case "receive":
+        return <TrendingUp className="h-4 w-4" />;
+      case "deploy":
+      case "contract_deployment":
         return <TrendingUp className="h-4 w-4" />;
       default:
         return null;
@@ -91,9 +114,13 @@ export function TransactionHistory({ walletId }: TransactionHistoryProps) {
       case "send":
         return "bg-orange-100 text-orange-800 border-orange-200";
       case "fund":
+      case "super_faucet":
         return "bg-blue-100 text-blue-800 border-blue-200";
       case "receive":
         return "bg-green-100 text-green-800 border-green-200";
+      case "deploy":
+      case "contract_deployment":
+        return "bg-purple-100 text-purple-800 border-purple-200";
       default:
         return "bg-gray-100 text-gray-800 border-gray-200";
     }
@@ -171,7 +198,7 @@ export function TransactionHistory({ walletId }: TransactionHistoryProps) {
         </div>
       ) : (
         <div className="space-y-2">
-          {transactions.map((tx) => (
+          {paginatedTransactions.map((tx) => (
             <div
               key={tx.id}
               onClick={() => tx.tx_hash && openExplorer(tx.tx_hash)}
@@ -254,10 +281,38 @@ export function TransactionHistory({ walletId }: TransactionHistoryProps) {
       )}
 
       {transactions.length > 0 && (
-        <div className="mt-4 pt-4 border-t text-xs text-muted-foreground">
-          <p>
-            <strong>Tip:</strong> Click any transaction to view details on Base Sepolia Explorer
-          </p>
+        <div className="mt-6 pt-6 border-t space-y-4">
+          {/* Pagination Controls - Properly Centered and Contained */}
+          <div className="flex items-center justify-center gap-4 p-3">
+            <Button
+              onClick={goToPreviousPage}
+              disabled={currentPage === 1 || totalPages <= 1}
+              variant="outline"
+              size="sm"
+              className="text-sm font-medium"
+            >
+              ← Previous
+            </Button>
+            <span className="text-sm font-semibold text-foreground whitespace-nowrap">
+              Page {currentPage} of {totalPages}
+            </span>
+            <Button
+              onClick={goToNextPage}
+              disabled={currentPage === totalPages || totalPages <= 1}
+              variant="outline"
+              size="sm"
+              className="text-sm font-medium"
+            >
+              Next →
+            </Button>
+          </div>
+          
+          {/* Tip Section */}
+          <div className="p-3 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900 rounded text-xs text-blue-800 dark:text-blue-300">
+            <p>
+              <strong>💡 Tip:</strong> Click any transaction to view details on Base Sepolia Explorer. Currently showing {itemsPerPage} transactions per page.
+            </p>
+          </div>
         </div>
       )}
     </div>

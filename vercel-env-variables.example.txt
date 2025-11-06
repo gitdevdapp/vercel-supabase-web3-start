@@ -1,0 +1,34 @@
+# Supabase Configuration
+# Get these values from: https://supabase.com/dashboard/project/YOUR_PROJECT_ID/settings/api
+NEXT_PUBLIC_SUPABASE_URL=https://YOUR_PROJECT_ID.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY=YOUR_SUPABASE_ANON_KEY
+
+# Application URL Configuration (CRITICAL FOR OAUTH)
+# This ensures consistent redirect URLs for OAuth flows regardless of www/non-www access
+NEXT_PUBLIC_APP_URL=https://yourdomain.com
+
+# Optional: Service Role Key (for admin operations - keep secret!)
+SUPABASE_SERVICE_ROLE_KEY=YOUR_SUPABASE_SERVICE_ROLE_KEY
+
+# CDP (Coinbase Developer Platform) Configuration
+# Get these from your Coinbase Developer Platform dashboard: https://portal.cdp.coinbase.com/
+CDP_API_KEY_ID=YOUR_CDP_API_KEY_ID
+CDP_API_KEY_SECRET=YOUR_CDP_API_KEY_SECRET
+CDP_WALLET_SECRET=YOUR_CDP_WALLET_SECRET
+
+# Network Configuration
+NETWORK=base-sepolia
+NEXT_PUBLIC_WALLET_NETWORK=base-sepolia
+
+# AI Service Configuration
+OPENAI_API_KEY=your-openai-key
+
+# Feature Flags - CDP Wallets ENABLED
+NEXT_PUBLIC_ENABLE_CDP_WALLETS=true
+NEXT_PUBLIC_ENABLE_AI_CHAT=false
+NEXT_PUBLIC_ENABLE_WEB3_AUTH=false
+
+# Web3 Authentication Configuration
+WEB3_AUTH_SECRET=your-signing-secret-here
+WALLET_CONNECT_PROJECT_ID=your-wallet-connect-project-id-optional
+

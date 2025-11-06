@@ -23,8 +23,8 @@ export interface ProfileUpdate {
   full_name?: string;
   avatar_url?: string;
   profile_picture?: string;
-  about_me?: string;
-  bio?: string;
+  about_me?: string | null;
+  bio?: string | null;
   is_public?: boolean;
   email_verified?: boolean;
   onboarding_completed?: boolean;
@@ -114,7 +114,7 @@ export async function getOrCreateProfile(userId: string, email: string): Promise
       full_name: defaultFullName,
       avatar_url: undefined,
       profile_picture: undefined,
-      about_me: 'Welcome to my profile! I\'m excited to be part of the community.',
+      about_me: null,
       bio: 'New member exploring the platform',
       is_public: false,
       email_verified: false,

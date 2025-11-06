@@ -1,11 +1,9 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Wallet, Plus, Send, Droplet, Copy, Loader2, History } from "lucide-react";
+import { Wallet, Copy, Loader2, AlertCircle, CheckCircle2, ChevronDown, TrendingUp, Droplet } from "lucide-react";
 import { TransactionHistory } from "@/components/wallet/TransactionHistory";
 
 interface WalletData {
@@ -19,454 +17,493 @@ interface WalletData {
   };
 }
 
+interface FaucetStatus {
+  step: number;
+  balance: number;
+  timestamp: string;
+}
+
+interface SuperFaucetResponse {
+  success: boolean;
+  requestCount: number;
+  startBalance: number;
+  finalBalance: number;
+  totalReceived: number;
+  transactionHashes: string[];
+  statusUpdates: FaucetStatus[];
+  explorerUrls: string[];
+}
+
 export function ProfileWalletCard() {
+  console.log('[ProfileWalletCard] Component starting...');
+
   const [wallet, setWallet] = useState<WalletData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isCreating, setIsCreating] = useState(false);
-  const [isFunding, setIsFunding] = useState(false);
-  const [isSending, setIsSending] = useState(false);
-  const [showFund, setShowFund] = useState(false);
-  const [showSend, setShowSend] = useState(false);
-  const [showHistory, setShowHistory] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isUSDCFunding, setIsUSDCFunding] = useState(false);
+  const [usdcFundingError, setUSDCFundingError] = useState<string | null>(null);
+  const [balanceRefreshInterval, setBalanceRefreshInterval] = useState<NodeJS.Timeout | null>(null);
+  
+  // ✅ FIX: Use refs for counters to prevent unnecessary re-renders
+  const autoCreateAttempts = useRef(0);
+  const MAX_AUTO_CREATE_ATTEMPTS = 3;
+  const loadWalletInProgress = useRef(false);
+  const usdcRefreshAttempts = useRef(0);
+  const MAX_USDC_REFRESH_ATTEMPTS = 5;
 
-  // Wallet creation state
-  const [walletName, setWalletName] = useState("");
+  console.log('[ProfileWalletCard] State initialized, isLoading:', isLoading);
 
-  // Funding state
-  const [fundToken, setFundToken] = useState<'eth' | 'usdc'>('eth');
-
-  // Send state
-  const [sendToAddress, setSendToAddress] = useState("");
-  const [sendAmount, setSendAmount] = useState("");
-  const [sendToken, setSendToken] = useState<'eth' | 'usdc'>('usdc');
-
+  // ✅ FIX: useEffect with empty dependency array - runs only on mount
   useEffect(() => {
+    console.log('[ProfileWalletCard] useEffect triggered (mount only)');
     loadWallet();
   }, []);
 
   const loadWallet = async () => {
+    // ✅ FIX: Prevent concurrent loadWallet calls (debounce)
+    if (loadWalletInProgress.current) {
+      console.log('[ProfileWalletCard] loadWallet already in progress, skipping');
+      return;
+    }
+    
+    loadWalletInProgress.current = true;
+    console.log('[ProfileWalletCard] loadWallet starting...');
     try {
       setIsLoading(true);
+      setError(null);
+      console.log('[ProfileWalletCard] Fetching /api/wallet/list...');
       
-      // Get wallet from Supabase database (with balances)
       const response = await fetch('/api/wallet/list');
-      if (!response.ok) throw new Error('Failed to load wallet');
-      
+      console.log('[ProfileWalletCard] /api/wallet/list response:', response.status);
+
+      if (!response.ok) {
+        throw new Error(`Failed to load wallet: ${response.status}`);
+      }
+
+      console.log('[ProfileWalletCard] Parsing response JSON...');
       const data = await response.json();
-      
+      console.log('[ProfileWalletCard] Response data:', data);
+
       if (data.wallets && data.wallets.length > 0) {
+        console.log('[ProfileWalletCard] Found wallets:', data.wallets.length);
         const firstWallet = data.wallets[0];
-        
-        setWallet({
-          id: firstWallet.id,                      // ✅ Database UUID (not address!)
+
+        // ✅ CRITICAL FIX: Get real-time blockchain balances for accurate funding decisions
+        let ethBalance = 0;
+        let usdcBalance = 0;
+
+        try {
+          const balanceResponse = await fetch(`/api/wallet/balance?address=${firstWallet.address}&t=${Date.now()}`);
+          if (balanceResponse.ok) {
+            const balanceData = await balanceResponse.json();
+            ethBalance = balanceData.eth || 0;
+            usdcBalance = balanceData.usdc || 0;
+            console.log('[ProfileWalletCard] Real-time balances loaded:', { eth: ethBalance, usdc: usdcBalance });
+          } else {
+            console.warn('[ProfileWalletCard] Balance API failed, using database balances');
+            ethBalance = firstWallet.balances?.eth || 0;
+            usdcBalance = firstWallet.balances?.usdc || 0;
+          }
+        } catch (err) {
+          console.error('[ProfileWalletCard] Error fetching real-time balances:', err);
+          // Fallback to database balances if endpoint fails
+          ethBalance = firstWallet.balances?.eth || 0;
+          usdcBalance = firstWallet.balances?.usdc || 0;
+        }
+
+        const walletData = {
+          id: firstWallet.id,
           wallet_address: firstWallet.address,
           wallet_name: firstWallet.name,
           network: firstWallet.network || 'base-sepolia',
           balances: {
-            eth: firstWallet.balances?.eth || 0,
-            usdc: firstWallet.balances?.usdc || 0
+            eth: ethBalance,
+            usdc: usdcBalance
           }
-        });
+        };
+        console.log('[ProfileWalletCard] Setting wallet data:', walletData);
+        setWallet(walletData);
+        console.log('[ProfileWalletCard] Wallet set successfully');
+        
+        // ✅ FIX: Reset auto-create attempts on successful wallet load
+        autoCreateAttempts.current = 0;
+      } else {
+        console.log('[ProfileWalletCard] No wallets found');
+        
+        // ✅ FIX: Check if we've exceeded max auto-create attempts
+        if (autoCreateAttempts.current >= MAX_AUTO_CREATE_ATTEMPTS) {
+          console.error('[ProfileWalletCard] Max auto-create attempts exceeded');
+          setError('Unable to create wallet after multiple attempts. Please try again later.');
+          setWallet(null);
+        } else {
+          console.log(`[ProfileWalletCard] Triggering auto-create (attempt ${autoCreateAttempts.current + 1}/${MAX_AUTO_CREATE_ATTEMPTS})`);
+          autoCreateAttempts.current++;
+
+          // Auto-create wallet if none exists
+          try {
+            const createResponse = await fetch('/api/wallet/auto-create', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({})
+            });
+
+            if (createResponse.ok) {
+              const createData = await createResponse.json();
+              console.log('[ProfileWalletCard] Auto-create successful:', createData);
+
+              // ✅ FIX: Only reload if wallet was actually created (created: true)
+              if (createData.created) {
+                console.log('[ProfileWalletCard] Wallet created, reloading in 1 second...');
+                // Wait for database replication before reloading
+                setTimeout(() => {
+                  loadWalletInProgress.current = false;
+                  loadWallet();
+                }, 1000);
+                return;
+              } else {
+                console.warn('[ProfileWalletCard] Auto-create returned created: false, wallet may already exist');
+                // Try loading again immediately
+                setTimeout(() => {
+                  loadWalletInProgress.current = false;
+                  loadWallet();
+                }, 500);
+                return;
+              }
+            } else {
+              console.error('[ProfileWalletCard] Auto-create failed with status:', createResponse.status);
+              const errorData = await createResponse.json();
+              console.error('[ProfileWalletCard] Auto-create error:', errorData);
+              setError(errorData.error || 'Failed to create wallet');
+            }
+          } catch (createErr) {
+            console.error('[ProfileWalletCard] Auto-create error:', createErr);
+            setError('Failed to create wallet: ' + (createErr instanceof Error ? createErr.message : 'Unknown error'));
+          }
+        }
       }
     } catch (err) {
-      console.error('Error loading wallet:', err);
+      console.error('[ProfileWalletCard] Error loading wallet:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load wallet');
     } finally {
+      console.log('[ProfileWalletCard] loadWallet finally - ensuring loading is false');
+      loadWalletInProgress.current = false;
       setIsLoading(false);
-    }
-  };
-
-  const handleCreateWallet = async () => {
-    if (!walletName.trim()) {
-      setError('Please enter a wallet name');
-      return;
-    }
-
-    setIsCreating(true);
-    setError(null);
-    setSuccess(null);
-
-    try {
-      const response = await fetch('/api/wallet/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: walletName,
-          type: 'custom'
-        })
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to create wallet');
-      }
-
-      const data = await response.json();
-      setSuccess(`Wallet "${data.name}" created successfully!`);
-      setWalletName("");
-      
-      // Reload wallet
-      await loadWallet();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create wallet');
-    } finally {
-      setIsCreating(false);
-    }
-  };
-
-  const handleFundWallet = async () => {
-    if (!wallet) return;
-
-    setIsFunding(true);
-    setError(null);
-    setSuccess(null);
-
-    try {
-      const response = await fetch('/api/wallet/fund', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          address: wallet.wallet_address,
-          token: fundToken
-        })
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to fund wallet');
-      }
-
-      const data = await response.json();
-      const explorerUrl = `https://sepolia.basescan.org/tx/${data.transactionHash}`;
-      setSuccess(
-        `✅ Successfully funded with ${data.token}! TX: ${data.transactionHash.slice(0, 10)}... - View on Explorer: ${explorerUrl}`
-      );
-      setShowFund(false);
-      
-      // Reload wallet to refresh balances
-      setTimeout(() => loadWallet(), 2000);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fund wallet');
-    } finally {
-      setIsFunding(false);
-    }
-  };
-
-  const handleSendFunds = async () => {
-    if (!wallet || !sendToAddress || !sendAmount) {
-      setError('Please fill in all send fields');
-      return;
-    }
-
-    setIsSending(true);
-    setError(null);
-    setSuccess(null);
-
-    try {
-      const response = await fetch('/api/wallet/transfer', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fromAddress: wallet.wallet_address,
-          toAddress: sendToAddress,
-          amount: parseFloat(sendAmount),
-          token: sendToken
-        })
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to send funds');
-      }
-
-      const data = await response.json();
-      const explorerUrl = data.explorerUrl || `https://sepolia.basescan.org/tx/${data.transactionHash}`;
-      setSuccess(
-        `✅ Successfully sent ${sendAmount} ${sendToken.toUpperCase()}! TX: ${data.transactionHash.slice(0, 10)}... - View on Explorer: ${explorerUrl}`
-      );
-      setSendToAddress("");
-      setSendAmount("");
-      setShowSend(false);
-      
-      // Reload wallet to refresh balances
-      setTimeout(() => loadWallet(), 2000);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to send funds');
-    } finally {
-      setIsSending(false);
     }
   };
 
   const copyAddress = () => {
     if (wallet) {
       navigator.clipboard.writeText(wallet.wallet_address);
-      setSuccess('Address copied to clipboard!');
-      setTimeout(() => setSuccess(null), 2000);
+      console.log('Address copied to clipboard!');
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
     }
   };
 
+  const triggerAutoFaucet = async () => {
+    if (!wallet) return;
+    console.log('[ProfileWalletCard] Triggering auto-superfaucet...');
+    try {
+      const response = await fetch('/api/wallet/auto-superfaucet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ wallet_address: wallet.wallet_address })
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        console.log('[ProfileWalletCard] Auto-faucet result:', result);
+        // Reload wallet to show updated balance
+        setTimeout(() => loadWallet(), 2000);
+      }
+    } catch (err) {
+      console.error('[ProfileWalletCard] Auto-faucet error:', err);
+    }
+  };
+
+  const triggerUSDCFaucet = async () => {
+    if (!wallet) return;
+    console.log('[ProfileWalletCard] Triggering USDC faucet...');
+    try {
+      setIsUSDCFunding(true);
+      setUSDCFundingError(null);
+
+      const response = await fetch('/api/wallet/fund', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          address: wallet.wallet_address,
+          token: 'usdc'
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        // Handle specific CDP errors with user-friendly messages
+        if (response.status === 429 && errorData.error?.includes('Faucet limit exceeded')) {
+          throw new Error('Global Limit for Coinbase Faucet is 10 USDC per 24 hours - Follow our Guide to Deploy your own CDP Keys');
+        }
+        throw new Error(errorData.error || 'Failed to fund USDC');
+      }
+
+      const result = await response.json();
+      console.log('[ProfileWalletCard] USDC faucet result:', result);
+
+      // USDC balance sync requires longer delay due to database replication
+      // and potential RPC timing issues on production
+      setTimeout(() => {
+        loadWallet();
+        // Retry balance refresh after additional delay to ensure sync
+        setTimeout(() => loadWallet(), 3000);
+      }, 5000);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fund USDC';
+      console.error('[ProfileWalletCard] USDC faucet error:', errorMessage);
+      setUSDCFundingError(errorMessage);
+    } finally {
+      setIsUSDCFunding(false);
+    }
+  };
+
+  // ✅ FIX: Memoized startAutoRefresh function to prevent recreation
+  const startAutoRefresh = useRef(() => {
+    console.log('[ProfileWalletCard] Auto-refresh starting, will attempt 5 times every 5 seconds');
+    usdcRefreshAttempts.current = 0;
+    const interval = setInterval(() => {
+      usdcRefreshAttempts.current++;
+      console.log(`[ProfileWalletCard] Auto-refresh attempt ${usdcRefreshAttempts.current}/${MAX_USDC_REFRESH_ATTEMPTS}`);
+      loadWallet();
+      
+      // Stop after 5 attempts (25 seconds total)
+      if (usdcRefreshAttempts.current >= MAX_USDC_REFRESH_ATTEMPTS) {
+        console.log('[ProfileWalletCard] Auto-refresh complete after 5 attempts');
+        clearInterval(interval);
+        setBalanceRefreshInterval(null);
+      }
+    }, 5000);
+    
+    setBalanceRefreshInterval(interval);
+  }).current;
+
+  // ✅ FIX: Auto-refresh effect with improved dependency array
+  useEffect(() => {
+    if (isUSDCFunding && wallet) {
+      console.log('[ProfileWalletCard] USDC funding started, scheduling auto-refresh...');
+      // Start auto-refresh after 5 seconds
+      const timeoutId = setTimeout(() => {
+        console.log('[ProfileWalletCard] Starting auto-refresh sequence...');
+        startAutoRefresh();
+      }, 5000);
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [isUSDCFunding, wallet, startAutoRefresh]);
+
+  // Cleanup intervals on unmount
+  useEffect(() => {
+    return () => {
+      if (balanceRefreshInterval) {
+        console.log('[ProfileWalletCard] Cleaning up balance refresh interval on unmount');
+        clearInterval(balanceRefreshInterval);
+      }
+    };
+  }, [balanceRefreshInterval]);
+
+  console.log('[ProfileWalletCard] About to render, isLoading:', isLoading, 'wallet exists:', !!wallet);
+
   if (isLoading) {
+    console.log('[ProfileWalletCard] Rendering loading state');
     return (
-      <Card className="w-full max-w-3xl mx-auto shadow-lg">
-        <CardContent className="flex items-center justify-center py-12">
-          <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+      <Card className="w-full">
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Loader2 className="w-5 h-5 text-blue-500 animate-spin" />
+            <div>
+              <CardTitle>My Wallet</CardTitle>
+              <CardDescription>Loading wallet information...</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center py-8">
+            <div className="text-center">
+              <Loader2 className="w-8 h-8 animate-spin text-blue-500 mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">Initializing your wallet...</p>
+            </div>
+          </div>
         </CardContent>
       </Card>
     );
   }
 
+  if (error) {
+    console.log('[ProfileWalletCard] Rendering error state');
+    return (
+      <Card className="w-full border-destructive/50 bg-destructive/5">
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-5 h-5 text-destructive" />
+            <div>
+              <CardTitle>Wallet Error</CardTitle>
+              <CardDescription>Unable to load your wallet</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex gap-3 p-3 bg-destructive/10 border border-destructive/20 rounded-md">
+            <AlertCircle className="text-destructive flex-shrink-0 mt-0.5" size={18} />
+            <div className="text-sm text-destructive">{error}</div>
+          </div>
+          <Button onClick={loadWallet} variant="outline" className="w-full">
+            Try Again
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!wallet) {
+    console.log('[ProfileWalletCard] Rendering no wallet state');
+    return (
+      <Card className="w-full">
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Loader2 className="w-5 h-5 text-amber-500 animate-spin" />
+            <div>
+              <CardTitle>Creating Your Wallet</CardTitle>
+              <CardDescription>This may take a moment...</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center py-8">
+            <div className="text-center">
+              <Loader2 className="w-8 h-8 animate-spin text-amber-500 mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">Generating your wallet automatically...</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  console.log('[ProfileWalletCard] Rendering wallet display');
+
   return (
-    <Card className="w-full max-w-3xl mx-auto shadow-lg">
-      <CardHeader className="space-y-1 pb-6">
-        <div className="flex items-center gap-3">
-          <Wallet className="w-6 h-6 text-primary" />
+    <Card className="w-full">
+      <CardHeader>
+        <div className="flex items-center gap-2">
+          <CheckCircle2 className="w-5 h-5 text-green-500" />
           <div>
-            <CardTitle className="text-2xl">My Wallet</CardTitle>
-            <CardDescription className="text-base mt-1">
-              Manage your testnet funds (Base Sepolia)
-            </CardDescription>
+            <CardTitle>My Wallet</CardTitle>
+            <CardDescription>Your Web3 wallet on Base Sepolia</CardDescription>
           </div>
         </div>
       </CardHeader>
 
       <CardContent className="space-y-6">
-        {!wallet ? (
-          // Create Wallet Section
-          <div className="space-y-4 p-6 rounded-lg border bg-card">
-            <div className="text-center space-y-2">
-              <Wallet className="w-12 h-12 mx-auto text-muted-foreground" />
-              <h3 className="font-semibold text-lg">No Wallet Yet</h3>
-              <p className="text-sm text-muted-foreground">
-                Create your first wallet to get started with Web3
-              </p>
+        {/* Wallet Address Section */}
+        <div className="space-y-2">
+          <div className="text-sm font-medium text-muted-foreground">Wallet Address</div>
+          <div className="flex gap-2">
+            <div className="flex-1 p-3 rounded-lg bg-muted border border-input">
+              <code className="text-xs sm:text-sm font-mono break-all text-foreground">
+                {wallet.wallet_address}
+              </code>
             </div>
-            
-            <div className="space-y-3">
-              <Label htmlFor="wallet-name">Wallet Name</Label>
-              <Input
-                id="wallet-name"
-                value={walletName}
-                onChange={(e) => setWalletName(e.target.value)}
-                placeholder="My Wallet"
-                maxLength={50}
-              />
-            </div>
-
-            <Button 
-              onClick={handleCreateWallet}
-              disabled={!walletName.trim() || isCreating}
-              className="w-full h-11"
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={copyAddress}
+              className="flex-shrink-0"
             >
-              {isCreating ? (
+              <Copy className="w-4 h-4 mr-1" />
+              {copied ? 'Copied!' : 'Copy'}
+            </Button>
+          </div>
+        </div>
+
+        {/* Balances Grid with Action Buttons */}
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-2">
+            <div className="text-xs font-medium text-muted-foreground">ETH Balance</div>
+            <div className="p-3 rounded-lg bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900">
+              <p className="text-lg font-semibold text-foreground">
+                {wallet.balances?.eth?.toFixed(6) || '0.000000'}
+              </p>
+              <p className="text-xs text-muted-foreground">ETH</p>
+            </div>
+            {wallet.balances?.eth && wallet.balances.eth >= 0.01 && (
+              <div className="p-2 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900 rounded text-xs text-amber-700 dark:text-amber-200">
+                ℹ️ You already have {wallet.balances.eth.toFixed(6)} ETH, which is the maximum the faucet can provide. The faucet limit is 0.01 ETH per request.
+              </div>
+            )}
+            <Button
+              onClick={triggerAutoFaucet}
+              disabled={!!(wallet.balances?.eth && wallet.balances.eth >= 0.01)}
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white disabled:opacity-50"
+            >
+              <Droplet className="w-4 h-4 mr-2" />
+              Request ETH
+            </Button>
+          </div>
+          <div className="space-y-2">
+            <div className="text-xs font-medium text-muted-foreground">USDC Balance</div>
+            <div className="p-3 rounded-lg bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900">
+              <p className="text-lg font-semibold text-foreground">
+                ${wallet.balances?.usdc?.toFixed(2) || '0.00'}
+              </p>
+              <p className="text-xs text-muted-foreground">USDC</p>
+            </div>
+            <Button
+              onClick={triggerUSDCFaucet}
+              disabled={isUSDCFunding}
+              className="w-full bg-green-600 hover:bg-green-700 text-white"
+            >
+              {isUSDCFunding ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Creating...
+                  Requesting...
                 </>
               ) : (
-                <>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Create Wallet
-                </>
+                "Request USDC"
               )}
             </Button>
           </div>
-        ) : (
-          <>
-            {/* Wallet Info Section */}
-            <div className="space-y-4 p-4 rounded-lg border bg-card">
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <Label className="text-sm font-medium">Wallet Address</Label>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={copyAddress}
-                    className="h-8"
-                  >
-                    <Copy className="w-3 h-3 mr-1" />
-                    Copy
-                  </Button>
-                </div>
-                <div className="flex items-center gap-2 p-3 rounded-md border bg-muted font-mono text-sm break-all">
-                  {wallet.wallet_address}
-                </div>
-              </div>
+        </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">ETH Balance</Label>
-                  <div className="p-3 rounded-md border bg-muted text-sm font-semibold">
-                    {wallet.balances?.eth.toFixed(4) || '0.0000'} ETH
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-sm font-medium">USDC Balance</Label>
-                  <div className="p-3 rounded-md border bg-muted text-sm font-semibold">
-                    {wallet.balances?.usdc.toFixed(2) || '0.00'} USDC
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span className="inline-block w-2 h-2 rounded-full bg-green-500"></span>
-                Connected to Base Sepolia Testnet
-              </div>
+        {/* Funding Controls - Simple Buttons */}
+        <div className="space-y-3 border-t pt-4">
+          
+          {usdcFundingError && (
+            <div className="p-2 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900 rounded text-xs text-red-600 dark:text-red-400">
+              ❌ {usdcFundingError}
             </div>
+          )}
+        </div>
 
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Button
-                onClick={() => { setShowFund(!showFund); setShowSend(false); setShowHistory(false); }}
-                variant="outline"
-                className="flex-1 h-11"
-              >
-                <Droplet className="w-4 h-4 mr-2" />
-                Request Testnet Funds
-              </Button>
-              <Button
-                onClick={() => { setShowSend(!showSend); setShowFund(false); setShowHistory(false); }}
-                variant="outline"
-                className="flex-1 h-11"
-              >
-                <Send className="w-4 h-4 mr-2" />
-                Send Funds
-              </Button>
-              <Button
-                onClick={() => { setShowHistory(!showHistory); setShowFund(false); setShowSend(false); }}
-                variant="outline"
-                className="flex-1 h-11"
-              >
-                <History className="w-4 h-4 mr-2" />
-                Transaction History
-              </Button>
+        {/* Transaction History - Collapsible */}
+        <div className="space-y-3 border-t pt-4">
+          <Button
+            onClick={() => setIsHistoryOpen(!isHistoryOpen)}
+            variant="outline"
+            className="w-full flex justify-between items-center"
+          >
+            <span className="flex items-center gap-2">
+              <TrendingUp className="w-4 h-4" />
+              📊 Transaction History
+            </span>
+            <ChevronDown className={`w-4 h-4 transition-transform ${isHistoryOpen ? 'rotate-180' : ''}`} />
+          </Button>
+
+          {isHistoryOpen && (
+            <div className="mt-3">
+              <TransactionHistory walletId={wallet.id} />
             </div>
-
-            {/* Fund Wallet Section */}
-            {showFund && (
-              <div className="space-y-4 p-4 rounded-lg border bg-muted">
-                <h4 className="font-medium">Request Testnet Funds</h4>
-                
-                <div className="flex gap-2">
-                  <Button
-                    variant={fundToken === 'eth' ? 'default' : 'outline'}
-                    onClick={() => setFundToken('eth')}
-                    className="flex-1"
-                  >
-                    ETH (0.001)
-                  </Button>
-                  <Button
-                    variant={fundToken === 'usdc' ? 'default' : 'outline'}
-                    onClick={() => setFundToken('usdc')}
-                    className="flex-1"
-                  >
-                    USDC (1.0)
-                  </Button>
-                </div>
-
-                <Button 
-                  onClick={handleFundWallet}
-                  disabled={isFunding}
-                  className="w-full h-11"
-                >
-                  {isFunding ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Requesting...
-                    </>
-                  ) : (
-                    `Request ${fundToken.toUpperCase()}`
-                  )}
-                </Button>
-              </div>
-            )}
-
-            {/* Send Funds Section */}
-            {showSend && (
-              <div className="space-y-4 p-4 rounded-lg border bg-muted">
-                <h4 className="font-medium">Send Funds</h4>
-                
-                <div className="space-y-3">
-                  <div>
-                    <Label>Recipient Address</Label>
-                    <Input
-                      value={sendToAddress}
-                      onChange={(e) => setSendToAddress(e.target.value)}
-                      placeholder="0x..."
-                      className="mt-1"
-                    />
-                  </div>
-
-                  <div>
-                    <Label>Amount</Label>
-                    <Input
-                      type="number"
-                      value={sendAmount}
-                      onChange={(e) => setSendAmount(e.target.value)}
-                      placeholder="0.01"
-                      step="0.01"
-                      className="mt-1"
-                    />
-                  </div>
-
-                  <div className="flex gap-2">
-                    <Button
-                      variant={sendToken === 'usdc' ? 'default' : 'outline'}
-                      onClick={() => setSendToken('usdc')}
-                      className="flex-1"
-                    >
-                      USDC
-                    </Button>
-                    <Button
-                      variant={sendToken === 'eth' ? 'default' : 'outline'}
-                      onClick={() => setSendToken('eth')}
-                      className="flex-1"
-                    >
-                      ETH
-                    </Button>
-                  </div>
-                </div>
-
-                <Button 
-                  onClick={handleSendFunds}
-                  disabled={!sendToAddress || !sendAmount || isSending}
-                  className="w-full h-11"
-                >
-                  {isSending ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Sending...
-                    </>
-                  ) : (
-                    `Send ${sendToken.toUpperCase()}`
-                  )}
-                </Button>
-              </div>
-            )}
-
-            {/* Transaction History Section */}
-            {showHistory && wallet && (
-              <div className="space-y-4">
-                <TransactionHistory walletId={wallet.id} />
-              </div>
-            )}
-          </>
-        )}
-
-        {/* Error and Success Messages */}
-        {error && (
-          <div className="p-4 text-sm text-destructive-foreground bg-destructive/10 border border-destructive/20 rounded-md flex items-start gap-2">
-            <span className="text-lg flex-shrink-0">⚠️</span>
-            <span className="wrap-anywhere break-words">{error}</span>
-          </div>
-        )}
-        
-        {success && (
-          <div className="p-4 text-sm text-green-700 bg-green-50 border border-green-200 rounded-md dark:text-green-400 dark:bg-green-950 dark:border-green-800 flex items-start gap-2">
-            <span className="text-lg flex-shrink-0">✓</span>
-            <span className="wrap-anywhere break-words">{success}</span>
-          </div>
-        )}
+          )}
+        </div>
       </CardContent>
     </Card>
   );

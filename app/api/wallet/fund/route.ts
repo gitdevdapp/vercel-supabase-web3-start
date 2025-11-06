@@ -1,28 +1,26 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CdpClient } from "@coinbase/cdp-sdk";
-import { createPublicClient, http } from "viem";
-import { getChainSafe } from "@/lib/accounts";
+import { ethers } from "ethers";
 import { z } from "zod";
 import { isCDPConfigured, getNetworkSafe, FEATURE_ERRORS } from "@/lib/features";
 import { createClient } from "@/lib/supabase/server";
 import { env } from "@/lib/env";
 
+// RPC URLs for different networks
+const RPC_URLS = {
+  "base-sepolia": "https://sepolia.base.org",
+  "base": "https://mainnet.base.org"
+} as const;
+
 function getCdpClient(): CdpClient {
   if (!isCDPConfigured()) {
     throw new Error(FEATURE_ERRORS.CDP_NOT_CONFIGURED);
   }
-  
+
   return new CdpClient({
     apiKeyId: env.CDP_API_KEY_ID!,
     apiKeySecret: env.CDP_API_KEY_SECRET!,
     walletSecret: env.CDP_WALLET_SECRET!,
-  });
-}
-
-function getPublicClient() {
-  return createPublicClient({
-    chain: getChainSafe(),
-    transport: http(),
   });
 }
 
@@ -91,7 +89,6 @@ export async function POST(request: NextRequest) {
     }
 
     const cdp = getCdpClient();
-    const publicClient = getPublicClient();
 
     // Request funds from faucet
     const { transactionHash } = await cdp.evm.requestFaucet({
@@ -100,12 +97,14 @@ export async function POST(request: NextRequest) {
       token: token.toLowerCase() as "usdc" | "eth",
     });
 
-    // Wait for transaction confirmation
-    const tx = await publicClient.waitForTransactionReceipt({
-      hash: transactionHash,
-    });
+    // Wait for transaction confirmation using ethers
+    const provider = new ethers.JsonRpcProvider(RPC_URLS[network as keyof typeof RPC_URLS]);
+    const tx = await provider.waitForTransaction(transactionHash);
 
-    if (tx.status !== "success") {
+    // Check if transaction was successful (ethers returns 1 for success, 0 for failure)
+    const isSuccessful = tx?.status === 1;
+
+    if (!isSuccessful) {
       // Log failed transaction
       await supabase.rpc('log_wallet_operation', {
         p_user_id: user.id,
@@ -146,13 +145,24 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error("Funding error:", error);
+    console.error("Error type:", error instanceof Error ? error.constructor.name : typeof error);
+    console.error("Error message:", error instanceof Error ? error.message : String(error));
+    if (error instanceof Error && error.stack) {
+      console.error("Stack trace:", error.stack);
+    }
     
-    // Handle specific faucet errors
-    if (error instanceof Error && error.message.includes("rate limit")) {
-      return NextResponse.json(
-        { error: "Rate limit exceeded. Please wait before requesting more funds." },
-        { status: 429 }
-      );
+    // Handle specific faucet errors with broader matching
+    if (error instanceof Error) {
+      const errorMsg = error.message.toLowerCase();
+      if (errorMsg.includes("rate limit") || 
+          errorMsg.includes("faucet limit") ||
+          errorMsg.includes("limit reached") ||
+          errorMsg.includes("you have reached")) {
+        return NextResponse.json(
+          { error: "Global 10 USDC Limit per 24 Hours - Use our Guide to get your own CDP Keys", type: "FAUCET_LIMIT" },
+          { status: 429 }
+        );
+      }
     }
 
     return NextResponse.json(

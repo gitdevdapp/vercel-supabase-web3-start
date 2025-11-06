@@ -1,5 +1,81 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
+import { CdpClient } from "@coinbase/cdp-sdk";
+
+// 🤖 Helper function to directly create wallet (bypasses API call auth issues)
+async function autoCreateWalletDirect(
+  supabase: any,
+  userId: string,
+  userEmail?: string
+) {
+  try {
+    console.log('[AutoWallet] Attempting direct wallet creation for user:', userId);
+    
+    // Check if wallet already exists
+    const { data: existingWallet } = await supabase
+      .from('user_wallets')
+      .select('*')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (existingWallet) {
+      console.log('[AutoWallet] Wallet already exists:', existingWallet.wallet_address);
+      return { success: true, created: false, wallet: existingWallet };
+    }
+
+    // Generate wallet via CDP
+    const network = process.env.NEXT_PUBLIC_NETWORK || 'base-sepolia';
+    const cdp = new CdpClient({
+      apiKeyId: process.env.CDP_API_KEY_ID,
+      apiKeySecret: process.env.CDP_API_KEY_SECRET,
+      walletSecret: process.env.CDP_WALLET_SECRET,
+    });
+
+    const account = await cdp.evm.getOrCreateAccount({
+      name: `Auto-Wallet-${userId.slice(0, 8)}`
+    });
+
+    console.log('[AutoWallet] Wallet account generated:', account.address);
+
+    // Store in database
+    const { data: newWallet, error: dbError } = await supabase
+      .from('user_wallets')
+      .insert({
+        user_id: userId,
+        wallet_address: account.address,
+        wallet_name: 'Auto-Generated Wallet',
+        network: network,
+        is_active: true
+      })
+      .select()
+      .single();
+
+    if (dbError) {
+      console.error('[AutoWallet] Database error:', dbError);
+      return { success: false, error: dbError };
+    }
+
+    console.log('[AutoWallet] Wallet created successfully:', account.address);
+    
+    // Log operation
+    try {
+      await supabase.rpc('log_wallet_operation', {
+        p_user_id: userId,
+        p_wallet_id: newWallet.id,
+        p_operation_type: 'auto_create',
+        p_token_type: 'eth',
+        p_status: 'success'
+      });
+    } catch (err) {
+      console.error('[AutoWallet] Logging failed (non-critical):', err);
+    }
+
+    return { success: true, created: true, wallet: newWallet };
+  } catch (error) {
+    console.error('[AutoWallet] Error:', error);
+    return { success: false, error };
+  }
+}
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
@@ -52,6 +128,19 @@ export async function GET(request: NextRequest) {
         console.log("Provider:", data.user?.app_metadata?.provider);
         console.log("Session expires at:", data.session?.expires_at);
         console.log("Redirecting to:", `${origin}${next}`);
+        
+        // 🤖 AUTO-WALLET: Directly create wallet to avoid API auth issues
+        if (data.user?.id) {
+          const walletResult = await autoCreateWalletDirect(supabase, data.user.id, data.user.email);
+          if (walletResult.success) {
+            console.log("[AutoWallet] Auto-wallet created successfully:", {
+              address: walletResult.wallet?.wallet_address,
+              created: walletResult.created
+            });
+          } else {
+            console.error("[AutoWallet] Auto-wallet creation failed (non-critical):", walletResult.error);
+          }
+        }
         
         // Successfully authenticated, redirect to intended page
         return NextResponse.redirect(`${origin}${next}`);

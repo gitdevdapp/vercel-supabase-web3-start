@@ -76,7 +76,6 @@ export function WalletCard({ wallet, isSelected, onSelect, onRefreshBalance, onA
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
-            <h3 className="font-medium text-foreground">{wallet.name}</h3>
             {wallet.error && (
               <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded">
                 Error

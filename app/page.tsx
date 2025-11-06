@@ -6,7 +6,6 @@ import { HowItWorksSection } from "@/components/how-it-works-section";
 import { BackedBySection } from "@/components/backed-by-section";
 import { FoundationSection } from "@/components/foundation-section";
 import { FinalCtaSection } from "@/components/final-cta-section";
-import { MarketplaceSection } from "@/components/marketplace/MarketplaceSection";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { GlobalNav } from "@/components/navigation/global-nav";
 import { AuthButton } from "@/components/auth-button";
@@ -55,7 +54,6 @@ export default async function Home() {
           <ProblemExplanationSection />
           <HowItWorksSection />
           <FeaturesSection />
-          <MarketplaceSection />
           <FoundationSection />
           <FinalCtaSection />
           <BackedBySection />

@@ -1,6 +1,6 @@
 import { ProgressNav } from '@/components/guide/ProgressNav'
 import { StepSection } from '@/components/guide/StepSection'
-import { CursorPrompt } from '@/components/guide/CursorPrompt'
+import { ExpandableCodeBlock } from '@/components/guide/ExpandableCodeBlock'
 import { CollapsibleSection } from '@/components/guide/CollapsibleSection'
 import { GlobalNav } from '@/components/navigation/global-nav'
 import { GuideLockedView } from '@/components/guide/GuideLockedView'
@@ -108,8 +108,10 @@ export default async function GuidePage() {
             </p>
           </div>
 
-          <CursorPrompt 
-            prompt='Install Git for me and ensure my Git credentials have read write access on this machine. Set my Git username to &quot;YourName&quot; and email to &quot;your.email@example.com&quot;. Then verify Git is working correctly.'
+          <ExpandableCodeBlock
+            code={`Install Git for me and ensure my Git credentials have read write access on this machine. Set my Git username to "YourName" and email to "your.email@example.com". Then verify Git is working correctly.`}
+            language="bash"
+            previewLength={300}
           />
 
             <CollapsibleSection title="What This Does" variant="info" defaultOpen={false}>
@@ -147,8 +149,10 @@ export default async function GuidePage() {
             </p>
           </div>
 
-          <CursorPrompt 
-            prompt='Generate an SSH key for my GitHub account using my email &quot;your.email@example.com&quot;, add it to the SSH agent, copy the public key to my clipboard, and give me instructions on how to add it to GitHub. Then test the SSH connection to GitHub.'
+          <ExpandableCodeBlock
+            code={`Generate an SSH key for my GitHub account using my email "your.email@example.com", add it to the SSH agent, copy the public key to my clipboard, and give me instructions on how to add it to GitHub. Then test the SSH connection to GitHub.`}
+            language="bash"
+            previewLength={300}
           />
 
             <div className="mt-4 p-4 border border-border bg-card rounded-lg">
@@ -198,8 +202,10 @@ export default async function GuidePage() {
           <StepSection id="node" title="2.1 Install Node.js" emoji="⚡" estimatedTime="3 min">
             <p className="mb-4">Install Node.js and npm to run the application.</p>
 
-            <CursorPrompt 
-              prompt='Install the latest LTS version of Node.js and npm on my system. Then verify both are installed correctly and show me the versions.'
+            <ExpandableCodeBlock
+              code={`Install the latest LTS version of Node.js and npm on my system. Then verify both are installed correctly and show me the versions.`}
+              language="bash"
+              previewLength={300}
             />
 
             <div className="my-4 p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
@@ -220,8 +226,10 @@ export default async function GuidePage() {
             </p>
           </div>
 
-          <CursorPrompt 
-            prompt='Clone the GitHub repository from https://github.com/YOUR-USERNAME/vercel-supabase-web3-start.git into my Documents folder. Then navigate into the project directory, install all npm dependencies, and open the project in Cursor.'
+          <ExpandableCodeBlock
+            code={`Clone the GitHub repository from https://github.com/YOUR-USERNAME/vercel-supabase-web3-start.git into my Documents folder. Then navigate into the project directory, install all npm dependencies, and open the project in Cursor.`}
+            language="bash"
+            previewLength={300}
           />
 
         </StepSection>
@@ -258,9 +266,10 @@ export default async function GuidePage() {
             </div>
 
             <CollapsibleSection title="Deploy via CLI (Alternative)" variant="advanced" defaultOpen={false}>
-              <CursorPrompt 
-                prompt='Install the Vercel CLI globally, authenticate with my Vercel account, then deploy this project to Vercel production. Accept all default settings and show me the deployment URL when finished.'
-                title="CLI Deployment"
+              <ExpandableCodeBlock
+                code={`Install the Vercel CLI globally, authenticate with my Vercel account, then deploy this project to Vercel production. Accept all default settings and show me the deployment URL when finished.`}
+                language="bash"
+                previewLength={300}
               />
             </CollapsibleSection>
         </StepSection>
@@ -352,14 +361,15 @@ export default async function GuidePage() {
             </p>
           </div>
             
-            <CursorPrompt 
-                prompt='Help me set up environment variables for Vercel. Create a .env.local file with:
+            <ExpandableCodeBlock
+              code={`Help me set up environment variables for Vercel. Create a .env.local file with:
 
 NEXT_PUBLIC_SUPABASE_URL="YOUR_SUPABASE_URL"
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY="YOUR_ANON_KEY"
 
-Then upload to Vercel using CLI for all environments (production, preview, development) and trigger a new deployment.'
-                title="CLI Method (Recommended)"
+Then upload to Vercel using CLI for all environments (production, preview, development) and trigger a new deployment.`}
+              language="bash"
+              previewLength={300}
             />
 
           </div>
@@ -398,9 +408,10 @@ Then upload to Vercel using CLI for all environments (production, preview, devel
             </ol>
           </div>
 
-            <CursorPrompt 
-              prompt='Read the SQL setup script from docs/profile/SETUP-SCRIPT.sql, copy it to my clipboard, and confirm it was copied.'
-              title="Get SQL Script"
+            <ExpandableCodeBlock
+              code={`Read the SQL setup script from docs/profile/SETUP-SCRIPT.sql, copy it to my clipboard, and confirm it was copied.`}
+              language="bash"
+              previewLength={300}
             />
 
             <div className="my-4 p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
@@ -425,9 +436,11 @@ Then upload to Vercel using CLI for all environments (production, preview, devel
           <StepSection id="email" title="3.4 Configure Email Authentication" emoji="📧" estimatedTime="5 min">
             <p className="mb-4">Enable email signup and confirmation.</p>
 
-          <CursorPrompt 
-              prompt='Give me step-by-step instructions to configure email authentication in Supabase. Set the Site URL to my Vercel deployment URL &quot;YOUR_VERCEL_URL&quot;, add necessary redirect URLs for auth callback and confirmation, and update the email confirmation template.'
-            />
+          <ExpandableCodeBlock
+            code={`Give me step-by-step instructions to configure email authentication in Supabase. Set the Site URL to my Vercel deployment URL "YOUR_VERCEL_URL", add necessary redirect URLs for auth callback and confirmation, and update the email confirmation template.`}
+            language="bash"
+            previewLength={300}
+          />
 
           <div className="my-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
             <p className="text-sm text-muted-foreground">
@@ -868,9 +881,10 @@ Then upload to Vercel using CLI for all environments (production, preview, devel
               </div>
             </CollapsibleSection>
 
-            <CursorPrompt 
-              prompt='Analyze this feature plan focusing on [CHOOSE: edge cases / dependencies / performance & security]. List 10-15 specific questions and identify any issues or gaps in the plan.'
-              title="Use Cursor AI for Analysis"
+            <ExpandableCodeBlock
+              code={`Analyze this feature plan focusing on [CHOOSE: edge cases / dependencies / performance & security]. List 10-15 specific questions and identify any issues or gaps in the plan.`}
+              language="bash"
+              previewLength={300}
             />
 
             <div className="my-4 p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
@@ -909,16 +923,20 @@ Then upload to Vercel using CLI for all environments (production, preview, devel
                 {/* macOS / Linux */}
               <div>
                   <p className="text-sm font-semibold text-foreground mb-2">Mac / Linux / WSL:</p>
-                  <CursorPrompt 
-                    prompt='Kill all Next.js dev server and postcss processes on my machine. Run: pkill -f &quot;next dev&quot; || true; pkill -f &quot;postcss&quot; || true; sleep 2; ps aux | grep next'
+                  <ExpandableCodeBlock
+                    code={`Kill all Next.js dev server and postcss processes on my machine. Run: pkill -f "next dev" || true; pkill -f "postcss" || true; sleep 2; ps aux | grep next`}
+                    language="bash"
+                    previewLength={300}
                   />
                 </div>
 
                 {/* Windows */}
                 <div>
                   <p className="text-sm font-semibold text-foreground mb-2">Windows (PowerShell):</p>
-                  <CursorPrompt 
-                    prompt='Kill all Next.js dev server processes on Windows. Run: Get-Process | Where-Object { $_.ProcessName -like &quot;*node*&quot; -or $_.ProcessName -like &quot;*next*&quot; } | Stop-Process -Force'
+                  <ExpandableCodeBlock
+                    code={`Kill all Next.js dev server processes on Windows. Run: Get-Process | Where-Object { $_.ProcessName -like "*node*" -or $_.ProcessName -like "*next*" } | Stop-Process -Force`}
+                    language="bash"
+                    previewLength={300}
                   />
                 </div>
 
@@ -1002,8 +1020,10 @@ Then upload to Vercel using CLI for all environments (production, preview, devel
             <CollapsibleSection title="If Something Breaks in Production" variant="advanced" defaultOpen={false}>
               <div className="space-y-3 text-sm">
                 <p className="text-foreground font-semibold">Quick Rollback:</p>
-                <CursorPrompt 
-                  prompt='Revert my last commit and push to main to rollback the deployment: git revert HEAD && git push origin main'
+                <ExpandableCodeBlock
+                  code={`Revert my last commit and push to main to rollback the deployment: git revert HEAD && git push origin main`}
+                  language="bash"
+                  previewLength={300}
                 />
                 <p className="text-muted-foreground text-xs mt-2">This will create a new commit that undoes your changes, and Vercel will automatically redeploy the reverted version.</p>
               </div>

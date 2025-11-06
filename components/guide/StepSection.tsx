@@ -27,9 +27,11 @@ export function StepSection({ id, title, emoji, estimatedTime, children }: StepS
               <h2 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent break-words">
                 {title}
               </h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                Estimated time: {estimatedTime}
-              </p>
+              {estimatedTime && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  Estimated time: {estimatedTime}
+                </p>
+              )}
             </div>
           </div>
           <div className="h-1 bg-gradient-to-r from-primary to-primary/60 rounded-full" />

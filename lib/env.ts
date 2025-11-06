@@ -7,18 +7,23 @@ export const env = createEnv({
     CDP_WALLET_SECRET: z.string().optional(),
     CDP_API_KEY_ID: z.string().optional(),
     CDP_API_KEY_SECRET: z.string().optional(),
+    CDP_DEPLOYER_PRIVATE_KEY: z.string().optional(),
     NETWORK: z.enum(["base-sepolia", "base"]).default("base-sepolia"),
     URL: z.string().url().default("http://localhost:3000"),
-    
+
     // AI Gateway - optional for non-AI features
     VERCEL_AI_GATEWAY_KEY: z.string().optional(),
     OPENAI_API_KEY: z.string().optional(),
-    
+
     // Supabase Service Role Key (for admin operations)
     SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
-    
+
     // Optional seller address
     SELLER_ADDRESS: z.string().optional(),
+
+    // Test credentials - optional for testing
+    TEST_EMAIL: z.string().optional(),
+    TEST_PASSWORD: z.string().optional(),
   },
 
   client: {
@@ -28,6 +33,8 @@ export const env = createEnv({
     NEXT_PUBLIC_WALLET_NETWORK: z.enum(["base-sepolia", "base"]).default("base-sepolia"),
     NEXT_PUBLIC_ENABLE_CDP_WALLETS: z.string().default("false"),
     NEXT_PUBLIC_ENABLE_AI_CHAT: z.string().default("false"),
+    NEXT_PUBLIC_APP_URL: z.string().url().optional(),
+    NEXT_PUBLIC_SITE_URL: z.string().url().optional(),
   },
 
   /**
@@ -39,6 +46,7 @@ export const env = createEnv({
     CDP_WALLET_SECRET: process.env.CDP_WALLET_SECRET,
     CDP_API_KEY_ID: process.env.CDP_API_KEY_ID,
     CDP_API_KEY_SECRET: process.env.CDP_API_KEY_SECRET,
+    CDP_DEPLOYER_PRIVATE_KEY: process.env.CDP_DEPLOYER_PRIVATE_KEY,
     NETWORK: process.env.NETWORK,
     URL: process.env.VERCEL_PROJECT_PRODUCTION_URL
       ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
@@ -49,6 +57,8 @@ export const env = createEnv({
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY,
     SELLER_ADDRESS: process.env.SELLER_ADDRESS,
+    TEST_EMAIL: process.env.TEST_EMAIL,
+    TEST_PASSWORD: process.env.TEST_PASSWORD,
     
     // Client-side variables
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -56,6 +66,8 @@ export const env = createEnv({
     NEXT_PUBLIC_WALLET_NETWORK: process.env.NEXT_PUBLIC_WALLET_NETWORK,
     NEXT_PUBLIC_ENABLE_CDP_WALLETS: process.env.NEXT_PUBLIC_ENABLE_CDP_WALLETS,
     NEXT_PUBLIC_ENABLE_AI_CHAT: process.env.NEXT_PUBLIC_ENABLE_AI_CHAT,
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
   },
 
   /**

@@ -1,0 +1,218 @@
+import { createClient } from "@/lib/supabase/server";
+import { NFTTile } from "@/components/marketplace/NFTTile";
+import { generateMockNFTs, generateMockCollection } from "@/lib/mock-nft-data";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowLeft, ExternalLink } from "lucide-react";
+
+interface PageProps {
+  params: {
+    slug: string;
+  };
+}
+
+export async function generateMetadata({ params }: PageProps) {
+  const supabase = await createClient();
+
+  const { slug } = await params;
+
+  const { data: collection } = await supabase
+    .from("smart_contracts")
+    .select("collection_name, collection_description")
+    .eq("collection_slug", slug)
+    .eq("is_public", true)
+    .single();
+
+  return {
+    title: collection?.collection_name || "Collection",
+    description: collection?.collection_description || "NFT Collection"
+  };
+}
+
+export default async function CollectionDetailPage({ params }: PageProps) {
+  const supabase = await createClient();
+  const { slug } = await params;
+
+  // Fetch collection from database
+  const { data: collection, error } = await supabase
+    .from("smart_contracts")
+    .select("*")
+    .eq("collection_slug", slug)
+    .eq("is_public", true)
+    .single();
+
+  // MVP: Generate mock collection data if not found (for demo purposes)
+  const displayCollection = collection || generateMockCollection(
+    slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
+    slug,
+    slug.split('-').map(word => word.charAt(0).toUpperCase()).join(''),
+    Math.floor(Math.random() * 5000) + 1000,
+    '100000000000000000'
+  );
+
+  // Extract gradient from collection - use database value if available, otherwise default
+  const gradient = collection?.nft_default_gradient || {
+    colors: ["#cfe9f3", "#e5f0f7"],
+    angle: 135
+  };
+
+  // Generate mock NFTs for display
+  const mockNFTs = generateMockNFTs(
+    8,
+    displayCollection.collection_name,
+    displayCollection.collection_slug
+  );
+
+  const progress = displayCollection.max_supply
+    ? (displayCollection.total_minted / displayCollection.max_supply) * 100
+    : 0;
+
+  const baseScanUrl = collection 
+    ? `https://base-sepolia.basescan.org/address/${collection.contract_address}`
+    : `https://base-sepolia.basescan.org/`;
+
+  return (
+    <div className="flex-1 w-full flex flex-col gap-6">
+      {/* Back Button */}
+      <Link href="/marketplace">
+        <Button variant="ghost" className="gap-2 px-0 hover:bg-transparent hover:text-primary">
+          <ArrowLeft className="w-4 h-4" />
+          Back to Collections
+        </Button>
+      </Link>
+
+      {/* Banner Section */}
+      {displayCollection.collection_banner_url && (
+        <div className="relative w-full h-48 md:h-64 rounded-lg overflow-hidden">
+          <Image
+            src={displayCollection.collection_banner_url}
+            alt={displayCollection.collection_name}
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+      )}
+      {!displayCollection.collection_banner_url && collection?.collection_banner_gradient && (
+        <div 
+          className="relative w-full h-48 md:h-64 rounded-lg overflow-hidden"
+          style={{
+            backgroundImage: `linear-gradient(${collection.collection_banner_gradient.angle}deg, ${collection.collection_banner_gradient.colors.join(', ')})`
+          }}
+        />
+      )}
+
+      {/* Collection Header */}
+      <div className="flex gap-6 -mt-16 md:-mt-24 relative z-10 px-4">
+        {/* Collection Image */}
+        <div className="flex-shrink-0">
+          <div className="relative w-32 h-32 md:w-48 md:h-48 rounded-lg overflow-hidden bg-gradient-to-br from-slate-200 to-slate-300 border-4 border-background">
+            {displayCollection.collection_image_url ? (
+              <Image
+                src={displayCollection.collection_image_url}
+                alt={displayCollection.collection_name}
+                fill
+                className="object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-400 to-purple-500">
+                <span className="text-white text-2xl font-bold">
+                  {displayCollection.collection_symbol}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Collection Info */}
+        <div className="flex-1 flex flex-col justify-end pb-4">
+          <div className="space-y-4">
+            <div>
+              <h1 className="text-3xl md:text-4xl font-bold">
+                {displayCollection.collection_name}
+              </h1>
+              <p className="text-lg text-muted-foreground">
+                {displayCollection.collection_symbol}
+              </p>
+            </div>
+
+            <p className="text-foreground max-w-2xl">
+              {displayCollection.collection_description ||
+                "A curated collection of digital art and collectibles."}
+            </p>
+
+            {/* Badges and Stats */}
+            <div className="flex flex-wrap gap-4">
+              <div>
+                <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                  Total Minted
+                </p>
+                <p className="text-2xl font-bold">
+                  {displayCollection.total_minted}/{displayCollection.max_supply}
+                </p>
+              </div>
+
+              <div>
+                <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                  Progress
+                </p>
+                <p className="text-2xl font-bold">{progress.toFixed(1)}%</p>
+              </div>
+
+              {displayCollection.verified && (
+                <div className="flex items-end gap-2">
+                  <Badge className="bg-green-500 hover:bg-green-600">
+                    ✓ Verified
+                  </Badge>
+                </div>
+              )}
+            </div>
+
+            {/* Progress Bar */}
+            <div className="w-full max-w-md">
+              <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                <div
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 h-full rounded-full transition-all duration-300"
+                  style={{ width: `${Math.min(progress, 100)}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3 pt-4">
+              <a href={baseScanUrl} target="_blank" rel="noopener noreferrer">
+                <Button className="gap-2">
+                  View on BaseScan
+                  <ExternalLink className="w-4 h-4" />
+                </Button>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* NFTs Grid Section */}
+      <div className="mt-8">
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold">NFTs in Collection</h2>
+          <p className="text-muted-foreground mt-1">
+            Browse {mockNFTs.length} sample NFTs from this collection
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {mockNFTs.map((nft) => (
+            <NFTTile
+              key={nft.token_id}
+              nft={nft}
+              gradient={gradient}
+              collectionName={displayCollection.collection_name}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ExternalLink, CheckCircle, XCircle, Clock } from "lucide-react";
+import { ExternalLink, CheckCircle } from "lucide-react";
 
 interface FundingPanelProps {
   walletAddress: string;
@@ -20,14 +19,10 @@ interface FundingTransaction {
 }
 
 export function FundingPanel({ walletAddress, onFunded }: FundingPanelProps) {
-  const [selectedToken, setSelectedToken] = useState<"usdc" | "eth">("usdc");
-  const [isLoading, setIsLoading] = useState(false);
+  const [loadingToken, setLoadingToken] = useState<"usdc" | "eth" | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [recentTransactions, setRecentTransactions] = useState<FundingTransaction[]>([]);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [lastTransaction, setLastTransaction] = useState<FundingTransaction | null>(null);
-  const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
-  const [warningMessage, setWarningMessage] = useState<string | null>(null);
 
   // 401 error handler
   const handleApiError = (response: Response) => {
@@ -47,8 +42,6 @@ export function FundingPanel({ walletAddress, onFunded }: FundingPanelProps) {
     const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     
     for (let attempts = 0; attempts < maxAttempts; attempts++) {
-      setLoadingMessage(`⏳ Checking for balance update... (${attempts + 1}/${maxAttempts})`);
-      
       try {
         const response = await fetch(`/api/wallet/balance?address=${walletAddress}&t=${Date.now()}`);
         const data = await response.json();
@@ -61,7 +54,6 @@ export function FundingPanel({ walletAddress, onFunded }: FundingPanelProps) {
         const actualIncrease = currentBalance - previousBalance;
         
         if (currentBalance >= minimumExpectedBalance) {
-          setLoadingMessage(null);
           setSuccessMessage(
             `✅ Balance updated! Received ${actualIncrease.toFixed(tokenType === 'eth' ? 6 : 4)} ${tokenType.toUpperCase()}`
           );
@@ -82,25 +74,23 @@ export function FundingPanel({ walletAddress, onFunded }: FundingPanelProps) {
     }
     
     // All attempts exhausted
-    setLoadingMessage(null);
-    setWarningMessage(
-      `⚠️ Transaction successful but balance not updated yet. This can take up to 5 minutes on testnet.`
+    setSuccessMessage(
+      `✅ Transaction successful! Balance should update shortly.`
     );
+    onFunded();
     return false;
   };
 
-  const handleFundWallet = async () => {
+  const handleFundWallet = async (token: "usdc" | "eth") => {
     try {
-      setIsLoading(true);
+      setLoadingToken(token);
       setError(null);
       setSuccessMessage(null);
-      setLoadingMessage("🔄 Requesting funds from faucet...");
-      setWarningMessage(null);
 
       // Get current balance BEFORE funding
       const preBalanceResponse = await fetch(`/api/wallet/balance?address=${walletAddress}&t=${Date.now()}`);
       const preBalanceData = await preBalanceResponse.json();
-      const previousBalance = selectedToken === "usdc" 
+      const previousBalance = token === "usdc" 
         ? (preBalanceData.usdc || 0)
         : (preBalanceData.eth || 0);
 
@@ -111,7 +101,7 @@ export function FundingPanel({ walletAddress, onFunded }: FundingPanelProps) {
         },
         body: JSON.stringify({
           address: walletAddress,
-          token: selectedToken,
+          token: token,
         }),
       });
 
@@ -127,10 +117,10 @@ export function FundingPanel({ walletAddress, onFunded }: FundingPanelProps) {
       const result = await response.json();
       
       // Determine amount based on token type
-      const amount = selectedToken === "usdc" ? "1.0 USDC" : "0.001 ETH";
-      const expectedIncrease = selectedToken === "usdc" ? 1.0 : 0.001;
+      const amount = token === "usdc" ? "1.0 USDC" : "0.001 ETH";
+      const expectedIncrease = token === "usdc" ? 1.0 : 0.001;
       
-      // Add transaction to recent transactions
+      // Store transaction
       const newTransaction: FundingTransaction = {
         transactionHash: result.transactionHash,
         status: result.status === "success" ? "success" : "pending",
@@ -140,18 +130,12 @@ export function FundingPanel({ walletAddress, onFunded }: FundingPanelProps) {
         amount,
       };
 
-      setRecentTransactions(prev => [newTransaction, ...prev.slice(0, 4)]);
       setLastTransaction(newTransaction);
       
-      // Set initial success message
-      if (result.status === "success") {
-        setLoadingMessage("✅ Transaction confirmed! Checking balance update...");
-        
-        // Start polling for balance update (wait 5 seconds for blockchain propagation)
-        setTimeout(() => {
-          pollBalanceUpdate(previousBalance, expectedIncrease, selectedToken);
-        }, 5000);
-      }
+      // Poll for balance update
+      setTimeout(() => {
+        pollBalanceUpdate(previousBalance, expectedIncrease, token);
+      }, 5000);
       
     } catch (err) {
       if (err instanceof Error && err.message.includes("rate limit")) {
@@ -160,7 +144,7 @@ export function FundingPanel({ walletAddress, onFunded }: FundingPanelProps) {
         setError(err instanceof Error ? err.message : "Failed to fund wallet");
       }
     } finally {
-      setIsLoading(false);
+      setLoadingToken(null);
     }
   };
 
@@ -168,88 +152,21 @@ export function FundingPanel({ walletAddress, onFunded }: FundingPanelProps) {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
 
-  const formatTransactionHash = (hash: string) => {
-    return `${hash.slice(0, 8)}...${hash.slice(-6)}`;
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "success":
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
-      case "failed":
-        return <XCircle className="h-4 w-4 text-red-500" />;
-      case "pending":
-      default:
-        return <Clock className="h-4 w-4 text-yellow-500" />;
-    }
-  };
-
   return (
     <div className="p-6 bg-card text-card-foreground rounded-lg border">
-      <h3 className="text-lg font-semibold mb-4">Fund Wallet</h3>
+      <h3 className="text-lg font-semibold mb-4">Request Funds</h3>
       
       <div className="mb-4">
-        <div className="text-sm text-muted-foreground mb-1">Selected Wallet:</div>
+        <div className="text-sm text-muted-foreground mb-1">Wallet:</div>
         <code className="text-sm font-mono bg-muted px-2 py-1 rounded">
           {formatAddress(walletAddress)}
         </code>
       </div>
 
       <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
-            Select Token to Fund
-          </label>
-          <Select value={selectedToken} onValueChange={(value: "usdc" | "eth") => setSelectedToken(value)}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="usdc">
-                <div>
-                  <div className="font-medium">USDC</div>
-                  <div className="text-sm text-muted-foreground">USD Coin (for payments)</div>
-                </div>
-              </SelectItem>
-              <SelectItem value="eth">
-                <div>
-                  <div className="font-medium">ETH</div>
-                  <div className="text-sm text-muted-foreground">Ethereum (for gas fees)</div>
-                </div>
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
         {error && (
           <div className="p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm">
             {error}
-          </div>
-        )}
-
-        {loadingMessage && (
-          <div className="p-4 bg-blue-50 border border-blue-200 rounded-md text-blue-700">
-            <div className="flex items-center gap-2">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-              <span className="text-sm">{loadingMessage}</span>
-            </div>
-          </div>
-        )}
-
-        {warningMessage && (
-          <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md text-yellow-800">
-            <div className="flex items-center gap-2 mb-2">
-              <Clock className="h-4 w-4 text-yellow-600" />
-              <span className="text-sm">{warningMessage}</span>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onFunded()}
-              className="w-full mt-2 text-yellow-800 border-yellow-300 hover:bg-yellow-100"
-            >
-              Refresh Balance Manually
-            </Button>
           </div>
         )}
 
@@ -257,7 +174,7 @@ export function FundingPanel({ walletAddress, onFunded }: FundingPanelProps) {
           <div className="p-4 bg-green-50 border border-green-200 rounded-md text-green-700">
             <div className="flex items-center gap-2 mb-2">
               <CheckCircle className="h-5 w-5 text-green-600" />
-              <span className="font-medium">Funding Successful!</span>
+              <span className="font-medium">Funding Requested!</span>
             </div>
             <p className="text-sm mb-3">{successMessage}</p>
             {lastTransaction?.explorerUrl && (
@@ -274,60 +191,43 @@ export function FundingPanel({ walletAddress, onFunded }: FundingPanelProps) {
           </div>
         )}
 
-        <Button
-          onClick={handleFundWallet}
-          disabled={isLoading || !!loadingMessage}
-          className="w-full"
-        >
-          {isLoading || loadingMessage ? (
-            <>
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-              {isLoading ? "Requesting Funds..." : "Processing..."}
-            </>
-          ) : (
-            `Fund with ${selectedToken.toUpperCase()}`
-          )}
-        </Button>
+        <div className="grid grid-cols-2 gap-3">
+          <Button
+            onClick={() => handleFundWallet("eth")}
+            disabled={loadingToken !== null}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            {loadingToken === "eth" ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                Requesting...
+              </>
+            ) : (
+              "Request ETH"
+            )}
+          </Button>
 
-        <div className="text-xs text-muted-foreground space-y-1">
-          <p><strong>Testnet Faucet:</strong> Free funds for Base Sepolia testnet only</p>
-          <p><strong>Rate Limits:</strong> One request per token per 24 hours per address</p>
-          <p><strong>Amounts:</strong> ~$1 USDC or ~0.001 ETH per request</p>
+          <Button
+            onClick={() => handleFundWallet("usdc")}
+            disabled={loadingToken !== null}
+            className="w-full bg-green-600 hover:bg-green-700 text-white"
+          >
+            {loadingToken === "usdc" ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                Requesting...
+              </>
+            ) : (
+              "Request USDC"
+            )}
+          </Button>
         </div>
 
-        {recentTransactions.length > 0 && (
-          <div className="mt-6">
-            <h4 className="text-sm font-medium text-foreground mb-3">Recent Funding Transactions</h4>
-            <div className="space-y-2">
-              {recentTransactions.map((tx) => (
-                <div key={tx.transactionHash} className="flex items-center justify-between p-3 bg-muted rounded-lg text-sm border">
-                  <div className="flex items-center gap-3">
-                    {getStatusIcon(tx.status)}
-                    <div className="flex flex-col">
-                      <span className="font-mono text-xs text-foreground">
-                        {formatTransactionHash(tx.transactionHash)}
-                      </span>
-                      <span className="text-muted-foreground text-xs">
-                        {tx.amount || tx.token} • {new Date(tx.timestamp).toLocaleTimeString()}
-                      </span>
-                    </div>
-                  </div>
-                  {tx.explorerUrl && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => window.open(tx.explorerUrl, '_blank')}
-                      className="p-2 h-auto hover:bg-muted-foreground/10"
-                      title="View on Block Explorer"
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <div className="text-xs text-muted-foreground space-y-1">
+          <p><strong>USDC:</strong> Request $1 USDC per 24 hours</p>
+          <p><strong>ETH:</strong> Request ~0.001 ETH per 24 hours</p>
+          <p><strong>Testnet Only:</strong> All funds are for Base Sepolia testnet</p>
+        </div>
       </div>
     </div>
   );
