@@ -18,7 +18,7 @@ V3 Approach:
   Total: 3 actions, ~15-17 minutes
 
 V4 Approach:
-  1. Run: 00-ULTIMATE-MIGRATION.sql (15-17 min)
+  1. Run: Complete-setup-V6.sql (15-17 min)
   2. Create: profile-images bucket manually (30 sec)
   Total: 2 actions, same time!
   
@@ -58,7 +58,7 @@ Total Created:
 
 # Step 2: Run Ultimate Migration Script (15-17 minutes - AUTOMATED)
 → Open Supabase SQL Editor
-→ Open file: docs/migrateV4/00-ULTIMATE-MIGRATION.sql
+→ Open file: scripts/master/Complete-setup-V6.sql
 → Copy entire contents
 → Paste into SQL Editor
 → Click "Run"
@@ -72,7 +72,7 @@ Total Created:
 
 ```
 docs/migrateV4/
-├── 00-ULTIMATE-MIGRATION.sql          ← SINGLE SCRIPT (this is all you need!)
+├── Complete-setup-V6.sql          ← SINGLE SCRIPT (this is all you need!)
 ├── README.md                          ← This file
 └── BUCKET-SETUP.md                    ← Bucket creation reference
 ```
@@ -142,7 +142,7 @@ docs/migrateV4/
 1. Open Supabase Dashboard SQL Editor
    → SQL Editor → "+ New Query"
    
-2. Copy entire file: docs/migrateV4/00-ULTIMATE-MIGRATION.sql
+2. Copy entire file: scripts/master/Complete-setup-V6.sql
 
 3. Paste into SQL Editor
 

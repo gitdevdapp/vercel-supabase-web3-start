@@ -17,12 +17,15 @@ export function SuperGuideAccessWrapper({ children }: SuperGuideAccessWrapperPro
   useEffect(() => {
     const checkAccess = async () => {
       try {
+        console.log('SuperGuideAccessWrapper: Checking access...')
         setError(null)
         const response = await fetch('/api/staking/status')
-        
+        console.log('SuperGuideAccessWrapper: API response', response.status, response.ok)
+
         if (!response.ok) {
           if (response.status === 401) {
             // Unauthorized - likely not authenticated
+            console.log('SuperGuideAccessWrapper: User not authenticated')
             setError('Please log in to access the Super Guide')
             setHasAccess(false)
           } else {
@@ -30,9 +33,11 @@ export function SuperGuideAccessWrapper({ children }: SuperGuideAccessWrapperPro
           }
         } else {
           const data = await response.json()
+          console.log('SuperGuideAccessWrapper: API data', data)
           const balance = data.rair_staked || 0
           setStakedBalance(balance)
           setHasAccess(balance >= 3000)
+          console.log('SuperGuideAccessWrapper: Balance', balance, 'Has access', balance >= 3000)
         }
       } catch (error) {
         console.error('Failed to check staking access:', error)
@@ -100,7 +105,11 @@ export function SuperGuideAccessWrapper({ children }: SuperGuideAccessWrapperPro
     )
   }
 
-  // TEMPORARY: Skip access check for testing V8 implementation - MODIFIED
-  // Access granted - show content
+  // Access control: Show locked view if user doesn't have sufficient staked RAIR
+  if (!hasAccess) {
+    return <SuperGuideLockedView stakedBalance={stakedBalance ?? undefined} />
+  }
+
+  // User has access: Show full content
   return <>{children}</>
 }

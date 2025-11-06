@@ -8,26 +8,28 @@ export async function GET() {
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
+      console.log('Staking status API: No authenticated user', { authError, user });
       return NextResponse.json(
         { error: "Unauthorized" },
         { status: 401 }
       );
     }
 
-    // Call the get_staking_status function
-    const { data: result, error: functionError } = await supabase.rpc('get_staking_status');
+    console.log('Staking status API: Authenticated user', user.id);
 
-    if (functionError) {
-      console.error('Staking status function error:', functionError);
+    // Query the profiles table directly
+    const { data: profile, error: profileError } = await supabase
+      .from('profiles')
+      .select('rair_balance, rair_staked')
+      .eq('id', user.id)
+      .single();
 
-      if (functionError.message?.includes('Not authenticated')) {
-        return NextResponse.json(
-          { error: "Authentication required" },
-          { status: 401 }
-        );
-      }
+    console.log('Staking status API: Profile query result', { profile, profileError });
 
-      if (functionError.message?.includes('Profile not found')) {
+    if (profileError) {
+      console.error('Profile query error:', profileError);
+
+      if (profileError.code === 'PGRST116') {
         return NextResponse.json(
           { error: "Profile not found" },
           { status: 404 }
@@ -40,10 +42,14 @@ export async function GET() {
       );
     }
 
+    const rair_balance = profile.rair_balance || 0;
+    const rair_staked = profile.rair_staked || 0;
+    const has_superguide_access = rair_staked >= 3000;
+
     return NextResponse.json({
-      rair_balance: result.rair_balance || 0,
-      rair_staked: result.rair_staked || 0,
-      has_superguide_access: result.has_superguide_access || false
+      rair_balance,
+      rair_staked,
+      has_superguide_access
     });
 
   } catch (error) {

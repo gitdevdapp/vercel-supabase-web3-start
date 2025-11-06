@@ -20,8 +20,7 @@ This starter kit provides enterprise-grade Web3 infrastructure with Coinbase Dev
 
 **Execute database migration:**
 - Access SQL Editor in Supabase dashboard
-- Execute complete migration script: `scripts/master/00-ULTIMATE-MIGRATION.sql`
-- Verify "ULTIMATE MIGRATION V4 COMPLETE" confirmation
+- Execute complete migration script: `scripts/master/Complete-setup-V6.sql`
 
 ![SQL Migration Script](docs/assets/script.png)
 
@@ -110,11 +109,47 @@ NEXT_PUBLIC_DEPLOYER_ADDRESS=0xyour-40-character-wallet-address
 </div>
 ```
 
-- **Site URL**: Set to production Vercel deployment URL
-- **Redirect URLs**:
-  - `https://your-app.vercel.app/auth/callback`
-  - `https://your-app.vercel.app/protected/profile`
-  - Include local development URL during development
+#### 🔗 Critical Callback URL Configuration
+
+**Site URL**: Set to your production domain (e.g., `https://yourdomain.com`)
+
+**Complete Redirect URLs List (Copy-Paste Ready):**
+
+```bash
+# Production Domain URLs (replace yourdomain.com with your actual domain)
+https://yourdomain.com/auth/confirm
+https://yourdomain.com/auth/callback
+https://yourdomain.com/protected/profile
+
+# Authentication URLs
+https://yourdomain.com/auth/login
+https://yourdomain.com/auth/sign-up
+https://yourdomain.com/auth/forgot-password
+https://yourdomain.com/auth/update-password
+https://yourdomain.com/auth/error
+
+# Development URLs (keep for local development)
+http://localhost:3000/auth/callback
+http://localhost:3000/protected/profile
+
+# Vercel Preview URLs (optional, for staging deployments)
+https://vercel-supabase-web3.vercel.app/auth/callback
+https://vercel-supabase-web3.vercel.app/protected/profile
+
+# Legacy URLs (if migrating from devdapp)
+https://devdapp.com/auth/confirm
+https://devdapp.com/auth/callback
+https://devdapp.com/protected/profile
+https://www.devdapp.com/auth/confirm
+https://www.devdapp.com/auth/callback
+```
+
+**Configuration Steps:**
+1. Go to Supabase Dashboard → Authentication → URL Configuration
+2. Set **Site URL** to: `https://yourdomain.com`
+3. Copy-paste ALL redirect URLs from the list above into **Redirect URLs** field
+4. Include both `http://localhost:3000` URLs during development
+5. Include legacy URLs if migrating from existing system
 
 ![Redirect URLs Configuration](docs/assets/redirecturls.png)
 

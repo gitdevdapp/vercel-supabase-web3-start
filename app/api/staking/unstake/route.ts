@@ -55,20 +55,33 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if the function returned success
-    if (!result?.success) {
+    // unstake_rair returns a BOOLEAN, not a structured result
+    if (result !== true) {
       return NextResponse.json(
-        { error: result?.error || "Failed to unstake RAIR tokens" },
+        { error: "Failed to unstake RAIR tokens" },
         { status: 400 }
       );
     }
 
+    // Fetch updated staking status after successful unstake
+    const { data: updatedStatus, error: statusError } = await supabase.rpc('get_staking_status');
+
+    if (statusError) {
+      console.error('Error fetching updated status:', statusError);
+      // Still return success since the unstake worked
+      return NextResponse.json({
+        success: true,
+        amount: amount,
+        message: "Unstaked successfully, but failed to refresh status"
+      });
+    }
+
     return NextResponse.json({
       success: true,
-      transaction_id: result.transaction_id,
-      rair_balance: result.rair_balance,
-      rair_staked: result.rair_staked,
-      amount: result.amount
+      rair_balance: updatedStatus.rair_balance || 0,
+      rair_staked: updatedStatus.rair_staked || 0,
+      has_superguide_access: updatedStatus.has_superguide_access || false,
+      amount: amount
     });
 
   } catch (error) {

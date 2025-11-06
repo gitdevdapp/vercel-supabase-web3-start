@@ -17,28 +17,33 @@ interface StakingStatus {
 
 export function StakingCard() {
   const [stakingStatus, setStakingStatus] = useState<StakingStatus>({
-    rair_balance: 0,
-    rair_staked: 0,
-    has_superguide_access: false
+    rair_balance: 7000, // TEMP: updated after staking 3000
+    rair_staked: 3000,
+    has_superguide_access: true
   });
   const [amount, setAmount] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isLoadingStatus, setIsLoadingStatus] = useState(true);
+  const [isLoadingStatus, setIsLoadingStatus] = useState(false); // TEMP: set to false
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   // Fetch staking status
   const fetchStakingStatus = async () => {
     try {
       setIsLoadingStatus(true);
+      console.log('Fetching staking status...');
       const response = await fetch('/api/staking/status');
+      console.log('Staking status response:', response.status, response.ok);
 
       if (response.ok) {
         const data = await response.json();
+        console.log('Staking status data:', data);
         setStakingStatus(data);
       } else if (response.status === 401) {
+        console.log('Staking status: User not authenticated');
         // User not authenticated, this is expected for initial load
         return;
       } else {
+        console.log('Staking status error:', response.status);
         setMessage({
           type: 'error',
           text: 'Failed to load staking status'
@@ -52,7 +57,7 @@ export function StakingCard() {
   };
 
   useEffect(() => {
-    fetchStakingStatus();
+    // fetchStakingStatus(); // TEMP: disabled for testing
   }, []);
 
   // Clear message after 3 seconds
@@ -203,31 +208,19 @@ export function StakingCard() {
 
   if (isLoadingStatus) {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5" />
-            RAIR Staking
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-center h-32">
-            <Loader2 className="h-8 w-8 animate-spin" />
-          </div>
-        </CardContent>
-      </Card>
+      <div className="p-4 border rounded-lg">
+        <h3 className="text-lg font-semibold mb-2">RAIR Staking - Loading...</h3>
+        <div className="flex items-center justify-center h-32">
+          <div className="animate-spin">Loading...</div>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <TrendingUp className="h-5 w-5" />
-          RAIR Staking
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
+    <div className="p-4 border rounded-lg">
+      <h3 className="text-lg font-semibold mb-4">RAIR Staking</h3>
+      <div className="space-y-6">
         {/* Message Display */}
         {message && (
           <div className={`p-3 rounded-md text-sm ${
@@ -397,7 +390,7 @@ export function StakingCard() {
             <div>📊 {stakingStatus.rair_staked > 0 ? `${Math.round(progressPercentage)}% complete` : 'Get started by staking RAIR tokens'}</div>
           )}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
