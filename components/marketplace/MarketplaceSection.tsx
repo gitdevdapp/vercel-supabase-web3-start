@@ -61,13 +61,28 @@ export function MarketplaceSection() {
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <ShoppingCart className="w-8 h-8 text-primary" />
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <div className="flex items-center gap-3">
+              {/* Logo Placeholder */}
+              <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center border-2 border-dashed border-muted-foreground/50">
+                <span className="text-xs font-medium text-muted-foreground">Your Logo Here</span>
+              </div>
+              <ShoppingCart className="w-8 h-8 text-primary" />
+            </div>
             <h2 className="text-3xl lg:text-4xl font-bold">NFT Marketplace</h2>
           </div>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Discover, buy, and sell unique digital assets in our decentralized marketplace.
-            Connect your wallet to start trading NFTs securely.
+            This is placeholder marketplace content for demonstration purposes.
+            Learn how to build a fully functional Web3 application with Vercel, Supabase, and Coinbase CDP by following our comprehensive guide at{" "}
+            <a
+              href="https://devdapp.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline font-medium"
+            >
+              devdapp.com
+            </a>
+            .
           </p>
         </div>
 

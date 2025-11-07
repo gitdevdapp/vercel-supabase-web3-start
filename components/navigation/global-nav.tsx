@@ -1,7 +1,6 @@
 "use client";
 
 import { ThemeSwitcher } from "@/components/theme-switcher";
-import { DevDappLogo } from "@/components/ui/images";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -35,7 +34,9 @@ export function GlobalNav({
       <div className="w-full max-w-7xl flex justify-between items-center p-2 sm:p-3 px-3 sm:px-5 text-sm min-w-0">
         <div className="flex gap-2 sm:gap-5 items-center font-semibold min-w-0 flex-1">
           <Link href={"/"} className="text-xl font-bold flex-shrink-0">
-            <DevDappLogo priority={true} />
+            <div className="h-8 w-[180px] bg-muted rounded-lg flex items-center justify-center border-2 border-dashed border-muted-foreground/50">
+              <span className="text-sm font-medium text-muted-foreground">Your Logo Here</span>
+            </div>
           </Link>
           <div className="flex items-center gap-1 sm:gap-2 min-w-0">
             {showHomeButton && (

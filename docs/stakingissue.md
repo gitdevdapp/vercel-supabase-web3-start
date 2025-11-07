@@ -141,3 +141,4 @@ The `handle_new_user()` trigger function only inserts `id` and `email`, relying 
 **Report Generated**: November 6, 2025
 **Investigated By**: AI Assistant
 **Status**: Issues identified, fixes recommended
+
