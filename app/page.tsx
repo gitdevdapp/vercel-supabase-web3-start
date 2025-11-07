@@ -11,8 +11,7 @@ import { GlobalNav } from "@/components/navigation/global-nav";
 import { AuthButton } from "@/components/auth-button";
 import { EnvVarWarning } from "@/components/env-var-warning";
 import { OAuthCodeHandler } from "@/components/OAuthCodeHandler";
-import { MarketplaceSection } from "@/components/marketplace/MarketplaceSection";
-import { SetupGuideSection } from "@/components/setup-guide/SetupGuideSection";
+import { SimplifiedHomepageSection } from "@/components/SimplifiedHomepageSection";
 import { hasEnvVars } from "@/lib/utils";
 import { Suspense } from "react";
 // Tutorial components - currently unused but preserved for future development
@@ -49,14 +48,9 @@ export default async function Home() {
           showGuideButton={true} 
           authButtonComponent={!hasEnvVars ? <EnvVarWarning /> : <AuthButton showGuideButton={true} />}
         />
-        {/* Complete Setup Guide - Educational Content */}
+        {/* Homepage TLDR - Quick Start Overview */}
         <div className="w-full">
-          <SetupGuideSection />
-        </div>
-
-        {/* Marketplace Demo - Moved to Bottom */}
-        <div className="w-full">
-          <MarketplaceSection />
+          <SimplifiedHomepageSection />
         </div>
 
         {/* Original Homepage Sections - Hidden for V2 Migration */}
