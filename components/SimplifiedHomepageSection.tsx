@@ -84,7 +84,7 @@ export function SimplifiedHomepageSection() {
           {/* Primary CTA to SuperGuide */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
             <Button size="lg" asChild className="px-8">
-              <a href="/superguide" className="inline-flex items-center gap-2">
+              <a href="https://devdapp.com/superguide" className="inline-flex items-center gap-2">
                 <BookOpen className="w-5 h-5" />
                 Start Complete Setup Guide
                 <ArrowRight className="w-4 h-4" />
@@ -217,14 +217,14 @@ export function SimplifiedHomepageSection() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button size="lg" asChild className="px-8">
-                  <a href="/superguide" className="inline-flex items-center gap-2">
+                  <a href="https://devdapp.com/superguide" className="inline-flex items-center gap-2">
                     <BookOpen className="w-5 h-5" />
                     Open Complete Super Guide
                     <ArrowRight className="w-4 h-4" />
                   </a>
                 </Button>
                 <Button size="lg" variant="outline" asChild>
-                  <a href="/superguide#welcome" className="inline-flex items-center gap-2">
+                  <a href="https://devdapp.com/superguide#welcome" className="inline-flex items-center gap-2">
                     <Target className="w-5 h-5" />
                     Start with Prerequisites
                   </a>

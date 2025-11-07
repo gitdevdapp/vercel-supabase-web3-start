@@ -93,7 +93,7 @@ export function ProfileMenu({ userEmail, showGuideButton = false }: ProfileMenuP
         {/* Super Guide - conditionally shown based on staking status */}
         {stakingStatus?.has_superguide_access && (
           <DropdownMenuItem asChild>
-            <Link href="/superguide" className="cursor-pointer">
+            <Link href="https://devdapp.com/superguide" className="cursor-pointer">
               <Star className="h-4 w-4 mr-2" />
               Super Guide
             </Link>

@@ -204,7 +204,7 @@ export function TokenomicsHomepage() {
               <p className="text-muted-foreground mb-8 text-sm">
                 Unlock premium AI guides with RAIR tokens.
               </p>
-              <Link href="/superguide" className="inline-flex w-full justify-center py-3 px-4 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-500 dark:to-purple-500 text-white hover:from-blue-700 hover:to-purple-700 dark:hover:from-blue-600 dark:hover:to-purple-600 transition-all font-semibold text-sm">
+              <Link href="https://devdapp.com/superguide" className="inline-flex w-full justify-center py-3 px-4 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-500 dark:to-purple-500 text-white hover:from-blue-700 hover:to-purple-700 dark:hover:from-blue-600 dark:hover:to-purple-600 transition-all font-semibold text-sm">
                 Unlock Premium
               </Link>
             </div>

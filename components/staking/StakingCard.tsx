@@ -311,7 +311,7 @@ export function StakingCard() {
         </div>
 
         {/* Super Guide Access Button */}
-        <Link href="/superguide" className="block">
+        <Link href="https://devdapp.com/superguide" className="block">
           <Button 
             disabled={!stakingStatus.has_superguide_access}
             className="w-full"
